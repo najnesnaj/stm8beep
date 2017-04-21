@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by SDCC : free open source ANSI-C Compiler
 ; Version 3.4.0 #8981 (Jul 11 2014) (Linux)
-; This file was generated Fri Apr 21 14:18:39 2017
+; This file was generated Fri Apr 21 15:49:19 2017
 ;--------------------------------------------------------
 	.module beep
 	.optsdcc -mstm8
@@ -941,104 +941,130 @@ _timer_isr:
 	addw	sp, #2
 00103$:
 	iret
-;	beep.c: 376: int main () {
+;	beep.c: 396: int main () {
 ;	-----------------------------------------
 ;	 function main
 ;	-----------------------------------------
 _main:
 	sub	sp, #29
-;	beep.c: 380: u8 startmeting=0;	
-	clr	(0x07, sp)
-;	beep.c: 381: unsigned int val=0, current,periode;
+;	beep.c: 400: u8 startmeting=0;	
+	clr	(0x05, sp)
+;	beep.c: 401: unsigned int val=0, current,periode;
 	clrw	x
-	ldw	(0x10, sp), x
-;	beep.c: 383: InitializeSystemClock();
+	ldw	(0x1c, sp), x
+;	beep.c: 403: InitializeSystemClock();
 	call	_InitializeSystemClock
-;	beep.c: 385: BEEP_CSR = (0<<7) | (0<<6) | (1<<5) | 0x1E;
+;	beep.c: 405: BEEP_CSR = (0<<7) | (0<<6) | (1<<5) | 0x1E;
 	ldw	x, #0x50f3
 	ld	a, #0x3e
 	ld	(x), a
-;	beep.c: 386: PD_DDR = (1 << 3) | (1 << 2); // output mode
+;	beep.c: 406: PD_DDR = (1 << 3) | (1 << 2); // output mode
 	ldw	x, #0x5011
 	ld	a, #0x0c
 	ld	(x), a
-;	beep.c: 388: PD_DDR &=  ~(1 << 4); //PD4 input
+;	beep.c: 408: PD_DDR &=  ~(1 << 4); //PD4 input
 	ldw	x, #0x5011
 	ld	a, (x)
 	and	a, #0xef
 	ld	(x), a
-;	beep.c: 389: PD_CR1 = (1 << 3) | (1 << 2); // push-pull
+;	beep.c: 409: PD_CR1 = (1 << 3) | (1 << 2); // push-pull
 	ldw	x, #0x5012
 	ld	a, #0x0c
 	ld	(x), a
-;	beep.c: 390: PD_CR1 &= ~(1 << 4); // input with float
+;	beep.c: 410: PD_CR1 &= ~(1 << 4); // input with float
 	ldw	x, #0x5012
 	ld	a, (x)
 	and	a, #0xef
 	ld	(x), a
-;	beep.c: 391: PD_CR2 = (1 << 3) | (1 << 2) | (1<< 4); // up to 10MHz speed + interrupt enabled 
+;	beep.c: 411: PD_CR2 = (1 << 3) | (1 << 2) | (1<< 4); // up to 10MHz speed + interrupt enabled 
 	ldw	x, #0x5013
 	ld	a, #0x1c
 	ld	(x), a
-;	beep.c: 393: EXTI_CR1 = (1<<7); //Port D external sensitivity bits7:6 10: Falling edge only
+;	beep.c: 413: EXTI_CR1 = (1<<7); //Port D external sensitivity bits7:6 10: Falling edge only
 	ldw	x, #0x50a0
 	ld	a, #0x80
 	ld	(x), a
-;	beep.c: 394: EXTI_CR1 &= ~(1<<6); //Port D external sensitivity bits7:6 10: Falling edge only
+;	beep.c: 414: EXTI_CR1 &= ~(1<<6); //Port D external sensitivity bits7:6 10: Falling edge only
 	ldw	x, #0x50a0
 	ld	a, (x)
 	and	a, #0xbf
 	ld	(x), a
-;	beep.c: 397: tijd = &real_time;
+;	beep.c: 417: tijd = &real_time;
 	ldw	x, #_real_time+0
-	ldw	(0x1c, sp), x
-	ld	a, (0x1c, sp)
+	ldw	(0x1a, sp), x
+	ld	a, (0x1a, sp)
 	push	a
-	ld	a, (0x1e, sp)
-	ld	(0x03, sp), a
+	ld	a, (0x1c, sp)
+	ld	(0x10, sp), a
 	pop	a
-	ld	(0x01, sp), a
-;	beep.c: 404: tm1637Init();
+	ld	(0x0e, sp), a
+;	beep.c: 424: tm1637Init();
 	call	_tm1637Init
-;	beep.c: 406: InitializeUART();
+;	beep.c: 426: InitializeUART();
 	call	_InitializeUART
-;	beep.c: 409: __asm__("rim");
+;	beep.c: 429: FLASH_DUKR = FLASH_DUKR_KEY1;
+	ldw	x, #0x5064
+	ld	a, #0xae
+	ld	(x), a
+;	beep.c: 430: FLASH_DUKR = FLASH_DUKR_KEY2;
+	ldw	x, #0x5064
+	ld	a, #0x56
+	ld	(x), a
+;	beep.c: 431: while (!(FLASH_IAPSR & (1 << FLASH_IAPSR_DUL)));
+00101$:
+	ldw	x, #0x505f
+	ld	a, (x)
+	bcp	a, #0x08
+	jreq	00101$
+;	beep.c: 432: for (addr = EEPROM_START_ADDR; addr < EEPROM_END_ADDR; addr++)
+	ldw	x, #0x4000
+00116$:
+;	beep.c: 433: _MEM_(addr) = 0xAA;
+	ldw	y, x
+	ld	a, #0xaa
+	ld	(0x1, y), a
+	clr	(y)
+;	beep.c: 432: for (addr = EEPROM_START_ADDR; addr < EEPROM_END_ADDR; addr++)
+	incw	x
+	cpw	x, #0x4280
+	jrc	00116$
+;	beep.c: 439: __asm__("rim");
 	rim
-;	beep.c: 413: while (1) {
-00110$:
-;	beep.c: 414: ADC_CR1 |= ADC_ADON; // ADC ON
+;	beep.c: 443: while (1) {
+00114$:
+;	beep.c: 444: ADC_CR1 |= ADC_ADON; // ADC ON
 	bset	0x5401, #0
-;	beep.c: 415: ADC_CSR |= ((0x0F)&2); // select channel = 2 = PC4
+;	beep.c: 445: ADC_CSR |= ((0x0F)&2); // select channel = 2 = PC4
 	ldw	x, #0x5400
 	ld	a, (x)
 	or	a, #0x02
 	ld	(x), a
-;	beep.c: 416: ADC_CR2 |= ADC_ALIGN; // Right Aligned Data
+;	beep.c: 446: ADC_CR2 |= ADC_ALIGN; // Right Aligned Data
 	ldw	x, #0x5402
 	ld	a, (x)
 	or	a, #0x08
 	ld	(x), a
-;	beep.c: 417: ADC_CR1 |= ADC_ADON; // start conversion
+;	beep.c: 447: ADC_CR1 |= ADC_ADON; // start conversion
 	bset	0x5401, #0
-;	beep.c: 418: while(((ADC_CSR)&(1<<7))== 0); // Wait till EOC
-00101$:
+;	beep.c: 448: while(((ADC_CSR)&(1<<7))== 0); // Wait till EOC
+00105$:
 	ldw	x, #0x5400
 	ld	a, (x)
 	sll	a
-	jrnc	00101$
-;	beep.c: 420: val |= (unsigned int)ADC_DRL;
+	jrnc	00105$
+;	beep.c: 450: val |= (unsigned int)ADC_DRL;
 	ldw	x, #0x5405
 	ld	a, (x)
 	clrw	x
 	ld	xl, a
-	or	a, (0x11, sp)
-	ld	(0x1b, sp), a
+	or	a, (0x1d, sp)
+	ld	(0x19, sp), a
 	ld	a, xh
-	or	a, (0x10, sp)
-	ld	(0x05, sp), a
-	ld	a, (0x1b, sp)
-	ld	(0x06, sp), a
-;	beep.c: 422: val |= (unsigned int)ADC_DRH<<8;
+	or	a, (0x1c, sp)
+	ld	(0x01, sp), a
+	ld	a, (0x19, sp)
+	ld	(0x02, sp), a
+;	beep.c: 452: val |= (unsigned int)ADC_DRH<<8;
 	ldw	x, #0x5404
 	ld	a, (x)
 	clrw	x
@@ -1052,86 +1078,86 @@ _main:
 	sllw	x
 	sllw	x
 	ld	a, xl
-	or	a, (0x06, sp)
-	ld	(0x19, sp), a
+	or	a, (0x02, sp)
+	ld	(0x17, sp), a
 	ld	a, xh
-	or	a, (0x05, sp)
-	ld	(0x10, sp), a
-	ld	a, (0x19, sp)
-	ld	(0x11, sp), a
-;	beep.c: 423: ADC_CR1 &= ~(1<<0); // ADC Stop Conversion
+	or	a, (0x01, sp)
+	ld	(0x1c, sp), a
+	ld	a, (0x17, sp)
+	ld	(0x1d, sp), a
+;	beep.c: 453: ADC_CR1 &= ~(1<<0); // ADC Stop Conversion
 	ldw	x, #0x5401
 	ld	a, (x)
 	and	a, #0xfe
 	ld	(x), a
-;	beep.c: 424: current = val & 0x03ff;
-	ld	a, (0x11, sp)
+;	beep.c: 454: current = val & 0x03ff;
+	ld	a, (0x1d, sp)
 	ld	(0x04, sp), a
-	ld	a, (0x10, sp)
+	ld	a, (0x1c, sp)
 	and	a, #0x03
 	ld	(0x03, sp), a
-;	beep.c: 426: if (current > MIN_CURRENT){ //start timing current consumption
+;	beep.c: 456: if (current > MIN_CURRENT){ //start timing current consumption
 	ldw	x, (0x03, sp)
 	cpw	x, #0x000a
-	jrule	00105$
-;	beep.c: 428: starttijd.second = real_time.second;
+	jrule	00109$
+;	beep.c: 458: starttijd.second = real_time.second;
 	ldw	x, sp
-	addw	x, #8
-	ldw	y, (0x1c, sp)
+	addw	x, #6
+	ldw	y, (0x1a, sp)
 	ld	a, (y)
 	ld	(x), a
-;	beep.c: 429: starttijd.minute = real_time.minute;
+;	beep.c: 459: starttijd.minute = real_time.minute;
 	ldw	x, sp
-	addw	x, #8
-	ldw	(0x16, sp), x
-	ldw	x, (0x16, sp)
+	addw	x, #6
+	ldw	(0x14, sp), x
+	ldw	x, (0x14, sp)
 	incw	x
-	ldw	y, (0x1c, sp)
+	ldw	y, (0x1a, sp)
 	ld	a, (0x1, y)
 	ld	(x), a
-;	beep.c: 430: starttijd.hour = real_time.hour;
-	ldw	x, (0x16, sp)
+;	beep.c: 460: starttijd.hour = real_time.hour;
+	ldw	x, (0x14, sp)
 	incw	x
 	incw	x
-	ldw	y, (0x1c, sp)
+	ldw	y, (0x1a, sp)
 	ld	a, (0x2, y)
 	ld	(x), a
-;	beep.c: 431: starttijd.ticker = real_time.ticker;
-	ldw	x, (0x16, sp)
+;	beep.c: 461: starttijd.ticker = real_time.ticker;
+	ldw	x, (0x14, sp)
 	addw	x, #0x0004
-	ldw	y, (0x1c, sp)
+	ldw	y, (0x1a, sp)
 	ld	a, (0x7, y)
 	push	a
 	ld	a, (0x6, y)
-	ld	(0x15, sp), a
+	ld	(0x13, sp), a
 	ldw	y, (0x4, y)
 	pop	a
 	ld	(0x3, x), a
-	ld	a, (0x14, sp)
+	ld	a, (0x12, sp)
 	ld	(0x2, x), a
 	ldw	(x), y
-;	beep.c: 432: startmeting = 1;
+;	beep.c: 462: startmeting = 1;
 	ld	a, #0x01
-	ld	(0x07, sp), a
-00105$:
-;	beep.c: 434: if ((current < MIN_CURRENT) && (startmeting))
+	ld	(0x05, sp), a
+00109$:
+;	beep.c: 464: if ((current < MIN_CURRENT) && (startmeting))
 	ldw	x, (0x03, sp)
 	cpw	x, #0x000a
-	jrnc	00107$
-	tnz	(0x07, sp)
-	jreq	00107$
-;	beep.c: 437: startmeting = 0;
-	clr	(0x07, sp)
-00107$:
-;	beep.c: 442: tm1637DisplayDecimal(tijd->minute, 0); // display minutes 
-	ldw	x, (0x01, sp)
+	jrnc	00111$
+	tnz	(0x05, sp)
+	jreq	00111$
+;	beep.c: 467: startmeting = 0;
+	clr	(0x05, sp)
+00111$:
+;	beep.c: 472: tm1637DisplayDecimal(tijd->minute, 0); // display minutes 
+	ldw	x, (0x0e, sp)
 	ld	a, (0x1, x)
 	clrw	x
 	pushw	x
 	push	a
 	call	_tm1637DisplayDecimal
 	addw	sp, #3
-	jp	00110$
+	jp	00114$
 	addw	sp, #29
 	ret
 	.area CODE

@@ -44,12 +44,12 @@ CABS                                00000000    00000000 =           0. bytes (A
      00000083  l_HOME                          
      00000100  l_IRAM                          
      00000100  l_SSEG                          
-     0000056C  l_CODE                          
+     00000592  l_CODE                          
      00008000  s_HOME                          
      00008083  s_GSINIT                        
      0000809D  s_GSFINAL                       
      000080A0  s_CODE                          
-     0000860C  s_INITIALIZER                   
+     00008632  s_INITIALIZER                   
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 2.
 Hexadecimal  [32-Bits]
@@ -124,7 +124,7 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-CODE                                000080A0    0000056C =        1388. bytes (REL,CON)
+CODE                                000080A0    00000592 =        1426. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
@@ -151,8 +151,8 @@ CODE                                000080A0    0000056C =        1388. bytes (R
      0000841D  _rt_one_second_increment           beep
      00008470  _timer_isr                         beep
      0000848E  _main                              beep
-     000085A5  _segmentMap                        beep
-     000085B6  __mulint                           _mulint
+     000085CB  _segmentMap                        beep
+     000085DC  __mulint                           _mulint
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 10.
 

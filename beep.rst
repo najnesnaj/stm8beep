@@ -1,7 +1,7 @@
                                       1 ;--------------------------------------------------------
                                       2 ; File Created by SDCC : free open source ANSI-C Compiler
                                       3 ; Version 3.4.0 #8981 (Jul 11 2014) (Linux)
-                                      4 ; This file was generated Fri Apr 21 14:18:39 2017
+                                      4 ; This file was generated Fri Apr 21 15:49:19 2017
                                       5 ;--------------------------------------------------------
                                       6 	.module beep
                                       7 	.optsdcc -mstm8
@@ -115,7 +115,7 @@
       00808F AE 00 00         [ 2]  115 	ldw	x, #l_INITIALIZER
       008092 27 09            [ 1]  116 	jreq	00004$
       008094                        117 00003$:
-      008094 D6 86 0B         [ 1]  118 	ld	a, (s_INITIALIZER - 1, x)
+      008094 D6 86 31         [ 1]  118 	ld	a, (s_INITIALIZER - 1, x)
       008097 D7 00 0A         [ 1]  119 	ld	(s_INITIALIZED - 1, x), a
       00809A 5A               [ 2]  120 	decw	x
       00809B 26 F7            [ 1]  121 	jrne	00003$
@@ -223,7 +223,7 @@
       0080FB 89               [ 2]  223 	pushw	x
       0080FC 4B 0C            [ 1]  224 	push	#0x0c
       0080FE 4B 04            [ 1]  225 	push	#0x04
-      008100 CD 85 B6         [ 4]  226 	call	__mulint
+      008100 CD 85 DC         [ 4]  226 	call	__mulint
       008103 5B 04            [ 2]  227 	addw	sp, #4
       008105 1F 09            [ 2]  228 	ldw	(0x09, sp), x
       008107                        229 00103$:
@@ -595,7 +595,7 @@
       0082C8 96               [ 1]  595 	ldw	x, sp
       0082C9 5C               [ 2]  596 	incw	x
       0082CA 1F 09            [ 2]  597 	ldw	(0x09, sp), x
-      0082CC AE 85 A5         [ 2]  598 	ldw	x, #_segmentMap+0
+      0082CC AE 85 CB         [ 2]  598 	ldw	x, #_segmentMap+0
       0082CF 1F 0E            [ 2]  599 	ldw	(0x0e, sp), x
       0082D1 90 5F            [ 1]  600 	clrw	y
       0082D3                        601 00106$:
@@ -941,217 +941,243 @@
       00848B 5B 02            [ 2]  941 	addw	sp, #2
       00848D                        942 00103$:
       00848D 80               [11]  943 	iret
-                                    944 ;	beep.c: 376: int main () {
+                                    944 ;	beep.c: 396: int main () {
                                     945 ;	-----------------------------------------
                                     946 ;	 function main
                                     947 ;	-----------------------------------------
       00848E                        948 _main:
       00848E 52 1D            [ 2]  949 	sub	sp, #29
-                                    950 ;	beep.c: 380: u8 startmeting=0;	
-      008490 0F 07            [ 1]  951 	clr	(0x07, sp)
-                                    952 ;	beep.c: 381: unsigned int val=0, current,periode;
+                                    950 ;	beep.c: 400: u8 startmeting=0;	
+      008490 0F 05            [ 1]  951 	clr	(0x05, sp)
+                                    952 ;	beep.c: 401: unsigned int val=0, current,periode;
       008492 5F               [ 1]  953 	clrw	x
-      008493 1F 10            [ 2]  954 	ldw	(0x10, sp), x
-                                    955 ;	beep.c: 383: InitializeSystemClock();
+      008493 1F 1C            [ 2]  954 	ldw	(0x1c, sp), x
+                                    955 ;	beep.c: 403: InitializeSystemClock();
       008495 CD 80 A8         [ 4]  956 	call	_InitializeSystemClock
-                                    957 ;	beep.c: 385: BEEP_CSR = (0<<7) | (0<<6) | (1<<5) | 0x1E;
+                                    957 ;	beep.c: 405: BEEP_CSR = (0<<7) | (0<<6) | (1<<5) | 0x1E;
       008498 AE 50 F3         [ 2]  958 	ldw	x, #0x50f3
       00849B A6 3E            [ 1]  959 	ld	a, #0x3e
       00849D F7               [ 1]  960 	ld	(x), a
-                                    961 ;	beep.c: 386: PD_DDR = (1 << 3) | (1 << 2); // output mode
+                                    961 ;	beep.c: 406: PD_DDR = (1 << 3) | (1 << 2); // output mode
       00849E AE 50 11         [ 2]  962 	ldw	x, #0x5011
       0084A1 A6 0C            [ 1]  963 	ld	a, #0x0c
       0084A3 F7               [ 1]  964 	ld	(x), a
-                                    965 ;	beep.c: 388: PD_DDR &=  ~(1 << 4); //PD4 input
+                                    965 ;	beep.c: 408: PD_DDR &=  ~(1 << 4); //PD4 input
       0084A4 AE 50 11         [ 2]  966 	ldw	x, #0x5011
       0084A7 F6               [ 1]  967 	ld	a, (x)
       0084A8 A4 EF            [ 1]  968 	and	a, #0xef
       0084AA F7               [ 1]  969 	ld	(x), a
-                                    970 ;	beep.c: 389: PD_CR1 = (1 << 3) | (1 << 2); // push-pull
+                                    970 ;	beep.c: 409: PD_CR1 = (1 << 3) | (1 << 2); // push-pull
       0084AB AE 50 12         [ 2]  971 	ldw	x, #0x5012
       0084AE A6 0C            [ 1]  972 	ld	a, #0x0c
       0084B0 F7               [ 1]  973 	ld	(x), a
-                                    974 ;	beep.c: 390: PD_CR1 &= ~(1 << 4); // input with float
+                                    974 ;	beep.c: 410: PD_CR1 &= ~(1 << 4); // input with float
       0084B1 AE 50 12         [ 2]  975 	ldw	x, #0x5012
       0084B4 F6               [ 1]  976 	ld	a, (x)
       0084B5 A4 EF            [ 1]  977 	and	a, #0xef
       0084B7 F7               [ 1]  978 	ld	(x), a
-                                    979 ;	beep.c: 391: PD_CR2 = (1 << 3) | (1 << 2) | (1<< 4); // up to 10MHz speed + interrupt enabled 
+                                    979 ;	beep.c: 411: PD_CR2 = (1 << 3) | (1 << 2) | (1<< 4); // up to 10MHz speed + interrupt enabled 
       0084B8 AE 50 13         [ 2]  980 	ldw	x, #0x5013
       0084BB A6 1C            [ 1]  981 	ld	a, #0x1c
       0084BD F7               [ 1]  982 	ld	(x), a
-                                    983 ;	beep.c: 393: EXTI_CR1 = (1<<7); //Port D external sensitivity bits7:6 10: Falling edge only
+                                    983 ;	beep.c: 413: EXTI_CR1 = (1<<7); //Port D external sensitivity bits7:6 10: Falling edge only
       0084BE AE 50 A0         [ 2]  984 	ldw	x, #0x50a0
       0084C1 A6 80            [ 1]  985 	ld	a, #0x80
       0084C3 F7               [ 1]  986 	ld	(x), a
-                                    987 ;	beep.c: 394: EXTI_CR1 &= ~(1<<6); //Port D external sensitivity bits7:6 10: Falling edge only
+                                    987 ;	beep.c: 414: EXTI_CR1 &= ~(1<<6); //Port D external sensitivity bits7:6 10: Falling edge only
       0084C4 AE 50 A0         [ 2]  988 	ldw	x, #0x50a0
       0084C7 F6               [ 1]  989 	ld	a, (x)
       0084C8 A4 BF            [ 1]  990 	and	a, #0xbf
       0084CA F7               [ 1]  991 	ld	(x), a
-                                    992 ;	beep.c: 397: tijd = &real_time;
+                                    992 ;	beep.c: 417: tijd = &real_time;
       0084CB AE 00 01         [ 2]  993 	ldw	x, #_real_time+0
-      0084CE 1F 1C            [ 2]  994 	ldw	(0x1c, sp), x
-      0084D0 7B 1C            [ 1]  995 	ld	a, (0x1c, sp)
+      0084CE 1F 1A            [ 2]  994 	ldw	(0x1a, sp), x
+      0084D0 7B 1A            [ 1]  995 	ld	a, (0x1a, sp)
       0084D2 88               [ 1]  996 	push	a
-      0084D3 7B 1E            [ 1]  997 	ld	a, (0x1e, sp)
-      0084D5 6B 03            [ 1]  998 	ld	(0x03, sp), a
+      0084D3 7B 1C            [ 1]  997 	ld	a, (0x1c, sp)
+      0084D5 6B 10            [ 1]  998 	ld	(0x10, sp), a
       0084D7 84               [ 1]  999 	pop	a
-      0084D8 6B 01            [ 1] 1000 	ld	(0x01, sp), a
-                                   1001 ;	beep.c: 404: tm1637Init();
+      0084D8 6B 0E            [ 1] 1000 	ld	(0x0e, sp), a
+                                   1001 ;	beep.c: 424: tm1637Init();
       0084DA CD 82 B9         [ 4] 1002 	call	_tm1637Init
-                                   1003 ;	beep.c: 406: InitializeUART();
+                                   1003 ;	beep.c: 426: InitializeUART();
       0084DD CD 82 40         [ 4] 1004 	call	_InitializeUART
-                                   1005 ;	beep.c: 409: __asm__("rim");
-      0084E0 9A               [ 1] 1006 	rim
-                                   1007 ;	beep.c: 413: while (1) {
-      0084E1                       1008 00110$:
-                                   1009 ;	beep.c: 414: ADC_CR1 |= ADC_ADON; // ADC ON
-      0084E1 72 10 54 01      [ 1] 1010 	bset	0x5401, #0
-                                   1011 ;	beep.c: 415: ADC_CSR |= ((0x0F)&2); // select channel = 2 = PC4
-      0084E5 AE 54 00         [ 2] 1012 	ldw	x, #0x5400
-      0084E8 F6               [ 1] 1013 	ld	a, (x)
-      0084E9 AA 02            [ 1] 1014 	or	a, #0x02
-      0084EB F7               [ 1] 1015 	ld	(x), a
-                                   1016 ;	beep.c: 416: ADC_CR2 |= ADC_ALIGN; // Right Aligned Data
-      0084EC AE 54 02         [ 2] 1017 	ldw	x, #0x5402
-      0084EF F6               [ 1] 1018 	ld	a, (x)
-      0084F0 AA 08            [ 1] 1019 	or	a, #0x08
-      0084F2 F7               [ 1] 1020 	ld	(x), a
-                                   1021 ;	beep.c: 417: ADC_CR1 |= ADC_ADON; // start conversion
-      0084F3 72 10 54 01      [ 1] 1022 	bset	0x5401, #0
-                                   1023 ;	beep.c: 418: while(((ADC_CSR)&(1<<7))== 0); // Wait till EOC
-      0084F7                       1024 00101$:
-      0084F7 AE 54 00         [ 2] 1025 	ldw	x, #0x5400
-      0084FA F6               [ 1] 1026 	ld	a, (x)
-      0084FB 48               [ 1] 1027 	sll	a
-      0084FC 24 F9            [ 1] 1028 	jrnc	00101$
-                                   1029 ;	beep.c: 420: val |= (unsigned int)ADC_DRL;
-      0084FE AE 54 05         [ 2] 1030 	ldw	x, #0x5405
-      008501 F6               [ 1] 1031 	ld	a, (x)
-      008502 5F               [ 1] 1032 	clrw	x
-      008503 97               [ 1] 1033 	ld	xl, a
-      008504 1A 11            [ 1] 1034 	or	a, (0x11, sp)
-      008506 6B 1B            [ 1] 1035 	ld	(0x1b, sp), a
-      008508 9E               [ 1] 1036 	ld	a, xh
-      008509 1A 10            [ 1] 1037 	or	a, (0x10, sp)
-      00850B 6B 05            [ 1] 1038 	ld	(0x05, sp), a
-      00850D 7B 1B            [ 1] 1039 	ld	a, (0x1b, sp)
-      00850F 6B 06            [ 1] 1040 	ld	(0x06, sp), a
-                                   1041 ;	beep.c: 422: val |= (unsigned int)ADC_DRH<<8;
-      008511 AE 54 04         [ 2] 1042 	ldw	x, #0x5404
-      008514 F6               [ 1] 1043 	ld	a, (x)
-      008515 5F               [ 1] 1044 	clrw	x
-      008516 97               [ 1] 1045 	ld	xl, a
-      008517 58               [ 2] 1046 	sllw	x
-      008518 58               [ 2] 1047 	sllw	x
-      008519 58               [ 2] 1048 	sllw	x
-      00851A 58               [ 2] 1049 	sllw	x
-      00851B 58               [ 2] 1050 	sllw	x
-      00851C 58               [ 2] 1051 	sllw	x
-      00851D 58               [ 2] 1052 	sllw	x
-      00851E 58               [ 2] 1053 	sllw	x
-      00851F 9F               [ 1] 1054 	ld	a, xl
-      008520 1A 06            [ 1] 1055 	or	a, (0x06, sp)
-      008522 6B 19            [ 1] 1056 	ld	(0x19, sp), a
-      008524 9E               [ 1] 1057 	ld	a, xh
-      008525 1A 05            [ 1] 1058 	or	a, (0x05, sp)
-      008527 6B 10            [ 1] 1059 	ld	(0x10, sp), a
-      008529 7B 19            [ 1] 1060 	ld	a, (0x19, sp)
-      00852B 6B 11            [ 1] 1061 	ld	(0x11, sp), a
-                                   1062 ;	beep.c: 423: ADC_CR1 &= ~(1<<0); // ADC Stop Conversion
-      00852D AE 54 01         [ 2] 1063 	ldw	x, #0x5401
-      008530 F6               [ 1] 1064 	ld	a, (x)
-      008531 A4 FE            [ 1] 1065 	and	a, #0xfe
-      008533 F7               [ 1] 1066 	ld	(x), a
-                                   1067 ;	beep.c: 424: current = val & 0x03ff;
-      008534 7B 11            [ 1] 1068 	ld	a, (0x11, sp)
-      008536 6B 04            [ 1] 1069 	ld	(0x04, sp), a
-      008538 7B 10            [ 1] 1070 	ld	a, (0x10, sp)
-      00853A A4 03            [ 1] 1071 	and	a, #0x03
-      00853C 6B 03            [ 1] 1072 	ld	(0x03, sp), a
-                                   1073 ;	beep.c: 426: if (current > MIN_CURRENT){ //start timing current consumption
-      00853E 1E 03            [ 2] 1074 	ldw	x, (0x03, sp)
-      008540 A3 00 0A         [ 2] 1075 	cpw	x, #0x000a
-      008543 23 41            [ 2] 1076 	jrule	00105$
-                                   1077 ;	beep.c: 428: starttijd.second = real_time.second;
-      008545 96               [ 1] 1078 	ldw	x, sp
-      008546 1C 00 08         [ 2] 1079 	addw	x, #8
-      008549 16 1C            [ 2] 1080 	ldw	y, (0x1c, sp)
-      00854B 90 F6            [ 1] 1081 	ld	a, (y)
-      00854D F7               [ 1] 1082 	ld	(x), a
-                                   1083 ;	beep.c: 429: starttijd.minute = real_time.minute;
-      00854E 96               [ 1] 1084 	ldw	x, sp
-      00854F 1C 00 08         [ 2] 1085 	addw	x, #8
-      008552 1F 16            [ 2] 1086 	ldw	(0x16, sp), x
-      008554 1E 16            [ 2] 1087 	ldw	x, (0x16, sp)
-      008556 5C               [ 2] 1088 	incw	x
-      008557 16 1C            [ 2] 1089 	ldw	y, (0x1c, sp)
-      008559 90 E6 01         [ 1] 1090 	ld	a, (0x1, y)
-      00855C F7               [ 1] 1091 	ld	(x), a
-                                   1092 ;	beep.c: 430: starttijd.hour = real_time.hour;
-      00855D 1E 16            [ 2] 1093 	ldw	x, (0x16, sp)
-      00855F 5C               [ 2] 1094 	incw	x
-      008560 5C               [ 2] 1095 	incw	x
-      008561 16 1C            [ 2] 1096 	ldw	y, (0x1c, sp)
-      008563 90 E6 02         [ 1] 1097 	ld	a, (0x2, y)
-      008566 F7               [ 1] 1098 	ld	(x), a
-                                   1099 ;	beep.c: 431: starttijd.ticker = real_time.ticker;
-      008567 1E 16            [ 2] 1100 	ldw	x, (0x16, sp)
-      008569 1C 00 04         [ 2] 1101 	addw	x, #0x0004
-      00856C 16 1C            [ 2] 1102 	ldw	y, (0x1c, sp)
-      00856E 90 E6 07         [ 1] 1103 	ld	a, (0x7, y)
-      008571 88               [ 1] 1104 	push	a
-      008572 90 E6 06         [ 1] 1105 	ld	a, (0x6, y)
-      008575 6B 15            [ 1] 1106 	ld	(0x15, sp), a
-      008577 90 EE 04         [ 2] 1107 	ldw	y, (0x4, y)
-      00857A 84               [ 1] 1108 	pop	a
-      00857B E7 03            [ 1] 1109 	ld	(0x3, x), a
-      00857D 7B 14            [ 1] 1110 	ld	a, (0x14, sp)
-      00857F E7 02            [ 1] 1111 	ld	(0x2, x), a
-      008581 FF               [ 2] 1112 	ldw	(x), y
-                                   1113 ;	beep.c: 432: startmeting = 1;
-      008582 A6 01            [ 1] 1114 	ld	a, #0x01
-      008584 6B 07            [ 1] 1115 	ld	(0x07, sp), a
-      008586                       1116 00105$:
-                                   1117 ;	beep.c: 434: if ((current < MIN_CURRENT) && (startmeting))
-      008586 1E 03            [ 2] 1118 	ldw	x, (0x03, sp)
-      008588 A3 00 0A         [ 2] 1119 	cpw	x, #0x000a
-      00858B 24 06            [ 1] 1120 	jrnc	00107$
-      00858D 0D 07            [ 1] 1121 	tnz	(0x07, sp)
-      00858F 27 02            [ 1] 1122 	jreq	00107$
-                                   1123 ;	beep.c: 437: startmeting = 0;
-      008591 0F 07            [ 1] 1124 	clr	(0x07, sp)
-      008593                       1125 00107$:
-                                   1126 ;	beep.c: 442: tm1637DisplayDecimal(tijd->minute, 0); // display minutes 
-      008593 1E 01            [ 2] 1127 	ldw	x, (0x01, sp)
-      008595 E6 01            [ 1] 1128 	ld	a, (0x1, x)
-      008597 5F               [ 1] 1129 	clrw	x
-      008598 89               [ 2] 1130 	pushw	x
-      008599 88               [ 1] 1131 	push	a
-      00859A CD 82 C0         [ 4] 1132 	call	_tm1637DisplayDecimal
-      00859D 5B 03            [ 2] 1133 	addw	sp, #3
-      00859F CC 84 E1         [ 2] 1134 	jp	00110$
-      0085A2 5B 1D            [ 2] 1135 	addw	sp, #29
-      0085A4 81               [ 4] 1136 	ret
-                                   1137 	.area CODE
-      0085A5                       1138 _segmentMap:
-      0085A5 3F                    1139 	.db #0x3F	;  63
-      0085A6 06                    1140 	.db #0x06	;  6
-      0085A7 5B                    1141 	.db #0x5B	;  91
-      0085A8 4F                    1142 	.db #0x4F	;  79	'O'
-      0085A9 66                    1143 	.db #0x66	;  102	'f'
-      0085AA 6D                    1144 	.db #0x6D	;  109	'm'
-      0085AB 7D                    1145 	.db #0x7D	;  125
-      0085AC 07                    1146 	.db #0x07	;  7
-      0085AD 7F                    1147 	.db #0x7F	;  127
-      0085AE 6F                    1148 	.db #0x6F	;  111	'o'
-      0085AF 77                    1149 	.db #0x77	;  119	'w'
-      0085B0 7C                    1150 	.db #0x7C	;  124
-      0085B1 39                    1151 	.db #0x39	;  57	'9'
-      0085B2 5E                    1152 	.db #0x5E	;  94
-      0085B3 79                    1153 	.db #0x79	;  121	'y'
-      0085B4 71                    1154 	.db #0x71	;  113	'q'
-      0085B5 00                    1155 	.db #0x00	;  0
-                                   1156 	.area INITIALIZER
-                                   1157 	.area CABS (ABS)
+                                   1005 ;	beep.c: 429: FLASH_DUKR = FLASH_DUKR_KEY1;
+      0084E0 AE 50 64         [ 2] 1006 	ldw	x, #0x5064
+      0084E3 A6 AE            [ 1] 1007 	ld	a, #0xae
+      0084E5 F7               [ 1] 1008 	ld	(x), a
+                                   1009 ;	beep.c: 430: FLASH_DUKR = FLASH_DUKR_KEY2;
+      0084E6 AE 50 64         [ 2] 1010 	ldw	x, #0x5064
+      0084E9 A6 56            [ 1] 1011 	ld	a, #0x56
+      0084EB F7               [ 1] 1012 	ld	(x), a
+                                   1013 ;	beep.c: 431: while (!(FLASH_IAPSR & (1 << FLASH_IAPSR_DUL)));
+      0084EC                       1014 00101$:
+      0084EC AE 50 5F         [ 2] 1015 	ldw	x, #0x505f
+      0084EF F6               [ 1] 1016 	ld	a, (x)
+      0084F0 A5 08            [ 1] 1017 	bcp	a, #0x08
+      0084F2 27 F8            [ 1] 1018 	jreq	00101$
+                                   1019 ;	beep.c: 432: for (addr = EEPROM_START_ADDR; addr < EEPROM_END_ADDR; addr++)
+      0084F4 AE 40 00         [ 2] 1020 	ldw	x, #0x4000
+      0084F7                       1021 00116$:
+                                   1022 ;	beep.c: 433: _MEM_(addr) = 0xAA;
+      0084F7 90 93            [ 1] 1023 	ldw	y, x
+      0084F9 A6 AA            [ 1] 1024 	ld	a, #0xaa
+      0084FB 90 E7 01         [ 1] 1025 	ld	(0x1, y), a
+      0084FE 90 7F            [ 1] 1026 	clr	(y)
+                                   1027 ;	beep.c: 432: for (addr = EEPROM_START_ADDR; addr < EEPROM_END_ADDR; addr++)
+      008500 5C               [ 2] 1028 	incw	x
+      008501 A3 42 80         [ 2] 1029 	cpw	x, #0x4280
+      008504 25 F1            [ 1] 1030 	jrc	00116$
+                                   1031 ;	beep.c: 439: __asm__("rim");
+      008506 9A               [ 1] 1032 	rim
+                                   1033 ;	beep.c: 443: while (1) {
+      008507                       1034 00114$:
+                                   1035 ;	beep.c: 444: ADC_CR1 |= ADC_ADON; // ADC ON
+      008507 72 10 54 01      [ 1] 1036 	bset	0x5401, #0
+                                   1037 ;	beep.c: 445: ADC_CSR |= ((0x0F)&2); // select channel = 2 = PC4
+      00850B AE 54 00         [ 2] 1038 	ldw	x, #0x5400
+      00850E F6               [ 1] 1039 	ld	a, (x)
+      00850F AA 02            [ 1] 1040 	or	a, #0x02
+      008511 F7               [ 1] 1041 	ld	(x), a
+                                   1042 ;	beep.c: 446: ADC_CR2 |= ADC_ALIGN; // Right Aligned Data
+      008512 AE 54 02         [ 2] 1043 	ldw	x, #0x5402
+      008515 F6               [ 1] 1044 	ld	a, (x)
+      008516 AA 08            [ 1] 1045 	or	a, #0x08
+      008518 F7               [ 1] 1046 	ld	(x), a
+                                   1047 ;	beep.c: 447: ADC_CR1 |= ADC_ADON; // start conversion
+      008519 72 10 54 01      [ 1] 1048 	bset	0x5401, #0
+                                   1049 ;	beep.c: 448: while(((ADC_CSR)&(1<<7))== 0); // Wait till EOC
+      00851D                       1050 00105$:
+      00851D AE 54 00         [ 2] 1051 	ldw	x, #0x5400
+      008520 F6               [ 1] 1052 	ld	a, (x)
+      008521 48               [ 1] 1053 	sll	a
+      008522 24 F9            [ 1] 1054 	jrnc	00105$
+                                   1055 ;	beep.c: 450: val |= (unsigned int)ADC_DRL;
+      008524 AE 54 05         [ 2] 1056 	ldw	x, #0x5405
+      008527 F6               [ 1] 1057 	ld	a, (x)
+      008528 5F               [ 1] 1058 	clrw	x
+      008529 97               [ 1] 1059 	ld	xl, a
+      00852A 1A 1D            [ 1] 1060 	or	a, (0x1d, sp)
+      00852C 6B 19            [ 1] 1061 	ld	(0x19, sp), a
+      00852E 9E               [ 1] 1062 	ld	a, xh
+      00852F 1A 1C            [ 1] 1063 	or	a, (0x1c, sp)
+      008531 6B 01            [ 1] 1064 	ld	(0x01, sp), a
+      008533 7B 19            [ 1] 1065 	ld	a, (0x19, sp)
+      008535 6B 02            [ 1] 1066 	ld	(0x02, sp), a
+                                   1067 ;	beep.c: 452: val |= (unsigned int)ADC_DRH<<8;
+      008537 AE 54 04         [ 2] 1068 	ldw	x, #0x5404
+      00853A F6               [ 1] 1069 	ld	a, (x)
+      00853B 5F               [ 1] 1070 	clrw	x
+      00853C 97               [ 1] 1071 	ld	xl, a
+      00853D 58               [ 2] 1072 	sllw	x
+      00853E 58               [ 2] 1073 	sllw	x
+      00853F 58               [ 2] 1074 	sllw	x
+      008540 58               [ 2] 1075 	sllw	x
+      008541 58               [ 2] 1076 	sllw	x
+      008542 58               [ 2] 1077 	sllw	x
+      008543 58               [ 2] 1078 	sllw	x
+      008544 58               [ 2] 1079 	sllw	x
+      008545 9F               [ 1] 1080 	ld	a, xl
+      008546 1A 02            [ 1] 1081 	or	a, (0x02, sp)
+      008548 6B 17            [ 1] 1082 	ld	(0x17, sp), a
+      00854A 9E               [ 1] 1083 	ld	a, xh
+      00854B 1A 01            [ 1] 1084 	or	a, (0x01, sp)
+      00854D 6B 1C            [ 1] 1085 	ld	(0x1c, sp), a
+      00854F 7B 17            [ 1] 1086 	ld	a, (0x17, sp)
+      008551 6B 1D            [ 1] 1087 	ld	(0x1d, sp), a
+                                   1088 ;	beep.c: 453: ADC_CR1 &= ~(1<<0); // ADC Stop Conversion
+      008553 AE 54 01         [ 2] 1089 	ldw	x, #0x5401
+      008556 F6               [ 1] 1090 	ld	a, (x)
+      008557 A4 FE            [ 1] 1091 	and	a, #0xfe
+      008559 F7               [ 1] 1092 	ld	(x), a
+                                   1093 ;	beep.c: 454: current = val & 0x03ff;
+      00855A 7B 1D            [ 1] 1094 	ld	a, (0x1d, sp)
+      00855C 6B 04            [ 1] 1095 	ld	(0x04, sp), a
+      00855E 7B 1C            [ 1] 1096 	ld	a, (0x1c, sp)
+      008560 A4 03            [ 1] 1097 	and	a, #0x03
+      008562 6B 03            [ 1] 1098 	ld	(0x03, sp), a
+                                   1099 ;	beep.c: 456: if (current > MIN_CURRENT){ //start timing current consumption
+      008564 1E 03            [ 2] 1100 	ldw	x, (0x03, sp)
+      008566 A3 00 0A         [ 2] 1101 	cpw	x, #0x000a
+      008569 23 41            [ 2] 1102 	jrule	00109$
+                                   1103 ;	beep.c: 458: starttijd.second = real_time.second;
+      00856B 96               [ 1] 1104 	ldw	x, sp
+      00856C 1C 00 06         [ 2] 1105 	addw	x, #6
+      00856F 16 1A            [ 2] 1106 	ldw	y, (0x1a, sp)
+      008571 90 F6            [ 1] 1107 	ld	a, (y)
+      008573 F7               [ 1] 1108 	ld	(x), a
+                                   1109 ;	beep.c: 459: starttijd.minute = real_time.minute;
+      008574 96               [ 1] 1110 	ldw	x, sp
+      008575 1C 00 06         [ 2] 1111 	addw	x, #6
+      008578 1F 14            [ 2] 1112 	ldw	(0x14, sp), x
+      00857A 1E 14            [ 2] 1113 	ldw	x, (0x14, sp)
+      00857C 5C               [ 2] 1114 	incw	x
+      00857D 16 1A            [ 2] 1115 	ldw	y, (0x1a, sp)
+      00857F 90 E6 01         [ 1] 1116 	ld	a, (0x1, y)
+      008582 F7               [ 1] 1117 	ld	(x), a
+                                   1118 ;	beep.c: 460: starttijd.hour = real_time.hour;
+      008583 1E 14            [ 2] 1119 	ldw	x, (0x14, sp)
+      008585 5C               [ 2] 1120 	incw	x
+      008586 5C               [ 2] 1121 	incw	x
+      008587 16 1A            [ 2] 1122 	ldw	y, (0x1a, sp)
+      008589 90 E6 02         [ 1] 1123 	ld	a, (0x2, y)
+      00858C F7               [ 1] 1124 	ld	(x), a
+                                   1125 ;	beep.c: 461: starttijd.ticker = real_time.ticker;
+      00858D 1E 14            [ 2] 1126 	ldw	x, (0x14, sp)
+      00858F 1C 00 04         [ 2] 1127 	addw	x, #0x0004
+      008592 16 1A            [ 2] 1128 	ldw	y, (0x1a, sp)
+      008594 90 E6 07         [ 1] 1129 	ld	a, (0x7, y)
+      008597 88               [ 1] 1130 	push	a
+      008598 90 E6 06         [ 1] 1131 	ld	a, (0x6, y)
+      00859B 6B 13            [ 1] 1132 	ld	(0x13, sp), a
+      00859D 90 EE 04         [ 2] 1133 	ldw	y, (0x4, y)
+      0085A0 84               [ 1] 1134 	pop	a
+      0085A1 E7 03            [ 1] 1135 	ld	(0x3, x), a
+      0085A3 7B 12            [ 1] 1136 	ld	a, (0x12, sp)
+      0085A5 E7 02            [ 1] 1137 	ld	(0x2, x), a
+      0085A7 FF               [ 2] 1138 	ldw	(x), y
+                                   1139 ;	beep.c: 462: startmeting = 1;
+      0085A8 A6 01            [ 1] 1140 	ld	a, #0x01
+      0085AA 6B 05            [ 1] 1141 	ld	(0x05, sp), a
+      0085AC                       1142 00109$:
+                                   1143 ;	beep.c: 464: if ((current < MIN_CURRENT) && (startmeting))
+      0085AC 1E 03            [ 2] 1144 	ldw	x, (0x03, sp)
+      0085AE A3 00 0A         [ 2] 1145 	cpw	x, #0x000a
+      0085B1 24 06            [ 1] 1146 	jrnc	00111$
+      0085B3 0D 05            [ 1] 1147 	tnz	(0x05, sp)
+      0085B5 27 02            [ 1] 1148 	jreq	00111$
+                                   1149 ;	beep.c: 467: startmeting = 0;
+      0085B7 0F 05            [ 1] 1150 	clr	(0x05, sp)
+      0085B9                       1151 00111$:
+                                   1152 ;	beep.c: 472: tm1637DisplayDecimal(tijd->minute, 0); // display minutes 
+      0085B9 1E 0E            [ 2] 1153 	ldw	x, (0x0e, sp)
+      0085BB E6 01            [ 1] 1154 	ld	a, (0x1, x)
+      0085BD 5F               [ 1] 1155 	clrw	x
+      0085BE 89               [ 2] 1156 	pushw	x
+      0085BF 88               [ 1] 1157 	push	a
+      0085C0 CD 82 C0         [ 4] 1158 	call	_tm1637DisplayDecimal
+      0085C3 5B 03            [ 2] 1159 	addw	sp, #3
+      0085C5 CC 85 07         [ 2] 1160 	jp	00114$
+      0085C8 5B 1D            [ 2] 1161 	addw	sp, #29
+      0085CA 81               [ 4] 1162 	ret
+                                   1163 	.area CODE
+      0085CB                       1164 _segmentMap:
+      0085CB 3F                    1165 	.db #0x3F	;  63
+      0085CC 06                    1166 	.db #0x06	;  6
+      0085CD 5B                    1167 	.db #0x5B	;  91
+      0085CE 4F                    1168 	.db #0x4F	;  79	'O'
+      0085CF 66                    1169 	.db #0x66	;  102	'f'
+      0085D0 6D                    1170 	.db #0x6D	;  109	'm'
+      0085D1 7D                    1171 	.db #0x7D	;  125
+      0085D2 07                    1172 	.db #0x07	;  7
+      0085D3 7F                    1173 	.db #0x7F	;  127
+      0085D4 6F                    1174 	.db #0x6F	;  111	'o'
+      0085D5 77                    1175 	.db #0x77	;  119	'w'
+      0085D6 7C                    1176 	.db #0x7C	;  124
+      0085D7 39                    1177 	.db #0x39	;  57	'9'
+      0085D8 5E                    1178 	.db #0x5E	;  94
+      0085D9 79                    1179 	.db #0x79	;  121	'y'
+      0085DA 71                    1180 	.db #0x71	;  113	'q'
+      0085DB 00                    1181 	.db #0x00	;  0
+                                   1182 	.area INITIALIZER
+                                   1183 	.area CABS (ABS)

@@ -367,14 +367,34 @@ void timer_isr(void) __interrupt(BEEP_ISR) {
 
 }
 
+#define _MEM_(mem_addr)         (*(volatile unsigned short *)(mem_addr))
+#define EEPROM_START_ADDR       0x4000
+#define EEPROM_END_ADDR         0x4280 
+//640 bytes of eeprom
 
 
+/*  
+void eeprom_write(uint16_t addr, uint8_t *buf, uint16_t len) {
+ //    unlock EEPROM 
+    FLASH_DUKR = FLASH_DUKR_KEY1;
+    FLASH_DUKR = FLASH_DUKR_KEY2;
+    while (!(FLASH_IAPSR & (1 << FLASH_IAPSR_DUL)));
+    // write data from buffer 
+    for (uint16_t i = 0; i < len; i++, addr++) {
+        _MEM_(addr) = buf[i];
+        while (!(FLASH_IAPSR & (1 << FLASH_IAPSR_EOP)));
+    }
+    //lock EEPROM 
+    FLASH_IAPSR &= ~(1 << FLASH_IAPSR_DUL);
+}
+*/
 
+//reading eeprom stm8flash -c stlinkv2 -p stm8s103f3 -s eeprom -r dump.bin
 
 
 
 int main () {
-
+        unsigned int addr;
         st_time *tijd;
         st_time starttijd;
         u8 startmeting=0;	
@@ -404,6 +424,16 @@ int main () {
 	tm1637Init();
 
 	InitializeUART();
+
+//EEPROM
+    FLASH_DUKR = FLASH_DUKR_KEY1;
+    FLASH_DUKR = FLASH_DUKR_KEY2;
+    while (!(FLASH_IAPSR & (1 << FLASH_IAPSR_DUL)));
+    for (addr = EEPROM_START_ADDR; addr < EEPROM_END_ADDR; addr++)
+        _MEM_(addr) = 0xAA;
+
+
+
 
 	/* Enable interrupts */
 	__asm__("rim");

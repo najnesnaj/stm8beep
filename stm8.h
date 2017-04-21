@@ -47,6 +47,13 @@
 #define FLASH_IAPSR		*(unsigned char*)0x00505F // Flash in-application programming status register  
 #define FLASH_PUKR		*(unsigned char*)0x005062 // Flash program memory unprotection register  
 #define FLASH_DUKR		*(unsigned char*)0x005064 // Data EEPROM unprotection register   
+#define FLASH_DUKR_KEY1         FLASH_PUKR_KEY2
+#define FLASH_DUKR_KEY2         FLASH_PUKR_KEY1
+#define FLASH_PUKR_KEY1         0x56
+#define FLASH_PUKR_KEY2         0xAE
+#define FLASH_IAPSR_DUL         3
+
+
 
 #define EXTI_CR1		*(unsigned char*)0x0050A0 // External interrupt control register 1  
 #define EXTI_CR2		*(unsigned char*)0x0050A1 // External interrupt control register 2  
