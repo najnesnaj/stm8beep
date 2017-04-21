@@ -44,12 +44,12 @@ CABS                                00000000    00000000 =           0. bytes (A
      00000083  l_HOME                          
      00000100  l_IRAM                          
      00000100  l_SSEG                          
-     00000565  l_CODE                          
+     0000056C  l_CODE                          
      00008000  s_HOME                          
      00008083  s_GSINIT                        
      0000809D  s_GSFINAL                       
      000080A0  s_CODE                          
-     00008605  s_INITIALIZER                   
+     0000860C  s_INITIALIZER                   
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 2.
 Hexadecimal  [32-Bits]
@@ -89,10 +89,8 @@ DATA                                00000001    0000000A =          10. bytes (R
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     00000001  _real_time                         sensors
-     00000005  _internteller                      sensors
-     00000007  _seconden                          sensors
-     00000009  _minuten                           sensors
+     00000001  _real_time                         beep
+     00000009  _internteller                      beep
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 6.
 Hexadecimal  [32-Bits]
@@ -126,48 +124,41 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-CODE                                000080A0    00000565 =        1381. bytes (REL,CON)
+CODE                                000080A0    0000056C =        1388. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     000080A0  _delayTenMicro                     sensors
-     000080A8  _InitializeSystemClock             sensors
-     000080F2  _delay                             sensors
-     0000813D  _i2c_read                          sensors
-     0000814E  _i2c_set_nak                       sensors
-     00008156  _i2c_set_stop                      sensors
-     0000815E  _i2c_send_reg                      sensors
-     00008180  _UARTPrintF                        sensors
-     00008197  _print_UCHAR_hex                   sensors
-     000081E5  _i2c_send_address                  sensors
-     00008227  _i2c_set_start_ack                 sensors
-     00008235  _print_byte_hex                    sensors
-     00008283  _i2c_read_register                 sensors
-     000082C6  _InitializeI2C                     sensors
-     000082F6  _InitializeUART                    sensors
-     0000836F  _tm1637Init                        sensors
-     00008376  _tm1637DisplayDecimal              sensors
-     0000840F  _tm1637SetBrightness               sensors
-     00008421  __tm1637Start                      sensors
-     00008433  __tm1637Stop                       sensors
-     0000845A  __tm1637ReadResult                 sensors
-     00008475  __tm1637WriteByte                  sensors
-     000084B3  __tm1637ClkHigh                    sensors
-     000084BB  __tm1637ClkLow                     sensors
-     000084C3  __tm1637DioHigh                    sensors
-     000084CB  __tm1637DioLow                     sensors
-     000084D3  _clock                             sensors
-     000084FC  _rt_one_second_increment           sensors
-     0000851F  _timer_isr                         sensors
-     0000853D  _main                              sensors
-     0000859E  _segmentMap                        sensors
-     000085AF  __mulint                           _mulint
+     000080A0  _delayTenMicro                     beep
+     000080A8  _InitializeSystemClock             beep
+     000080F2  _delay                             beep
+     0000813D  _UARTPrintF                        beep
+     00008154  _print_UCHAR_hex                   beep
+     000081A2  _i2c_send_address                  beep
+     000081E4  _i2c_set_start_ack                 beep
+     000081F2  _print_byte_hex                    beep
+     00008240  _InitializeUART                    beep
+     000082B9  _tm1637Init                        beep
+     000082C0  _tm1637DisplayDecimal              beep
+     00008359  _tm1637SetBrightness               beep
+     0000836B  __tm1637Start                      beep
+     0000837D  __tm1637Stop                       beep
+     000083A4  __tm1637ReadResult                 beep
+     000083BF  __tm1637WriteByte                  beep
+     000083FD  __tm1637ClkHigh                    beep
+     00008405  __tm1637ClkLow                     beep
+     0000840D  __tm1637DioHigh                    beep
+     00008415  __tm1637DioLow                     beep
+     0000841D  _rt_one_second_increment           beep
+     00008470  _timer_isr                         beep
+     0000848E  _main                              beep
+     000085A5  _segmentMap                        beep
+     000085B6  __mulint                           _mulint
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 10.
 
 Files Linked                              [ module(s) ]
 
-sensors.rel                               [  ]
+beep.rel                                  [  ]
 
 
 Libraries Linked                          [ object file ]

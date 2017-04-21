@@ -7,6 +7,8 @@
 #define I2C_READ        1
 #define I2C_WRITE       0
 
+#define MIN_CURRENT 10
+
 
 typedef unsigned char u8;
 
@@ -15,6 +17,7 @@ typedef struct {        // real time information field structure
         u8 minute;  
         u8 hour;  
         u8 day;  
+        long ticker; 
 } st_time; 
 
 st_time real_time;
@@ -48,24 +51,6 @@ void delay (int time_ms) {
 	for (x = 0; x < 1036*time_ms; ++x)
 		__asm__("nop");
 }
-void i2c_read (unsigned char *x) {
-	while ((I2C_SR1 & I2C_RXNE) == 0);
-	*x = I2C_DR;
-}
-void i2c_set_nak (void) {
-	I2C_CR2 &= ~I2C_ACK;
-}
-void i2c_set_stop (void) {
-	I2C_CR2 |= I2C_STOP;
-}
-void i2c_send_reg (UCHAR addr) {
-	volatile int reg;
-	reg = I2C_SR1;
-	reg = I2C_SR3;
-	I2C_DR = addr;
-	while ((I2C_SR1 & I2C_TXE) == 0);
-}
-
 
 void UARTPrintF (char *message) {
 	char *ch = message;
@@ -138,54 +123,6 @@ void print_byte_hex (unsigned char buffer) {
 }
 
 
-unsigned char i2c_read_register (UCHAR addr, UCHAR rg) {
-	volatile UCHAR reg;
-	UCHAR x;
-	i2c_set_start_ack ();
-	i2c_send_address (addr, I2C_WRITE);
-	i2c_send_reg (rg);
-	i2c_set_start_ack ();
-	i2c_send_address (addr, I2C_READ);
-	reg = I2C_SR1;
-	reg = I2C_SR3;
-	i2c_set_nak ();
-	i2c_set_stop ();
-	i2c_read (&x);
-	return (x);
-}
-
-void InitializeI2C (void) {
-	I2C_CR1 = 0;   //  Disable I2C before configuration starts. PE bit is bit 0
-	//
-	//  Setup the clock information.
-	//
-	I2C_FREQR = 16;                     //  Set the internal clock frequency (MHz).
-	UNSET (I2C_CCRH, I2C_FS);           //  I2C running is standard mode.
-	//	I2C_CCRL = 0x10;                    //  SCL clock speed is 500 kHz.
-	I2C_CCRL = 0xa0;                    //  SCL clock speed is 50 kHz.
-	//		I2C_CCRH &= 0xf0;	// Clears lower 4 bits "CCR"
-	I2C_CCRH &= 0x00;	// Clears lower 4 bits "CCR"
-	//
-	//  Set the address of this device.
-	//
-	UNSET (I2C_OARH, I2C_ADDMODE);      //  7 bit address mode.
-	SET (I2C_OARH, I2C_ADDCONF);        //  Docs say this must always be 1.
-	//
-	//  Setup the bus characteristics.
-	//
-	I2C_TRISER = 17;
-	//
-	//  Turn on the interrupts.
-	//
-	//I2C_ITR = I2C_ITBUFEN | I2C_ITEVTEN | I2C_ITERREN; //  Buffer, event and error interrupts enabled
-	//
-	//  Configuration complete so turn the peripheral on.
-	//
-	I2C_CR1 = I2C_PE;	// Enables port
-	//
-	//  Enter master mode.
-	//
-}
 
 void InitializeUART() {
 	//
@@ -397,60 +334,14 @@ void _tm1637DioLow(void)
 
 
 
-unsigned int clock(void)
-{
-	unsigned char h = TIM1_CNTRH; //origineel PCNTRH
-	unsigned char l = TIM1_CNTRL;
-	return((unsigned int)(h) << 8 | l);
-}
 
 
-unsigned int internteller;
-unsigned int seconden;
-unsigned int minuten;
-
-/*
-   voor port D external interrupts is 6 (ipv 23)
-
-   GPIO_Init(GPIOD, GPIO_PIN_4, GPIO_MODE_IN_FL_IT);       // PD4 external interrupt pin - float input
-   EXTI_SetExtIntSensitivity(EXTI_PORT_GPIOD, EXTI_SENSITIVITY_FALL_ONLY);
-
-   EXTI_CR1 = (1<<7); //Port D external sensitivity bits7:6 10: Falling edge only
-
-
-
-
-
-//PD4 is interrupt
-PD_DDR = (0 << 4); // input mode
-PD_CR1 &= ~(1 << 4); // input with float 
-PD_CR2 = (1 << 4); // interrupt enabled
-//PD_ODR &= ~(1 << 3);
-
-
-
-
-idee voor clock
-void rt_one_second_increment (st_time *t) {
-if(++t->second > 59) {
-t->second= 0;
-if(++t->minute > 59) {
-t->minute= 0;
-if(++t->hour > 23) {
-t->hour= 0;
-}
-}
-}
-}
-
-
-
- */
 
 
 #define BEEP_ISR 6 // port D
 
 void rt_one_second_increment (st_time *t) {
+  ++t->ticker; //   
         if(++t->second > 59) {
                 t->second= 0;
                 if(++t->minute > 59) {
@@ -464,7 +355,7 @@ void rt_one_second_increment (st_time *t) {
 
 
 
-
+unsigned int internteller;
 
 void timer_isr(void) __interrupt(BEEP_ISR) {
 	if (++internteller > 500) {
@@ -485,9 +376,9 @@ void timer_isr(void) __interrupt(BEEP_ISR) {
 int main () {
 
         st_time *tijd;
-	int maxValue = 0;          // store max value here
-	int minValue = 10;          // store max value here
-	unsigned int val=0;
+        st_time starttijd;
+        u8 startmeting=0;	
+        unsigned int val=0, current,periode;
 	unsigned int displaymode=1;
 	InitializeSystemClock();
 	//display on PD2 PD3
@@ -503,12 +394,12 @@ int main () {
 	EXTI_CR1 &= ~(1<<6); //Port D external sensitivity bits7:6 10: Falling edge only
 
 
-tijd = &real_time;
+        tijd = &real_time;
 
 	// Configure timer
 	// 1000 ticks per second
-	TIM1_PSCRH = 0x3e;
-	TIM1_PSCRL = 0x80;
+//	TIM1_PSCRH = 0x3e;
+//	TIM1_PSCRL = 0x80;
 
 	tm1637Init();
 
@@ -520,8 +411,34 @@ tijd = &real_time;
 
 
 	while (1) {
+                ADC_CR1 |= ADC_ADON; // ADC ON
+                ADC_CSR |= ((0x0F)&2); // select channel = 2 = PC4
+                ADC_CR2 |= ADC_ALIGN; // Right Aligned Data
+                ADC_CR1 |= ADC_ADON; // start conversion
+                while(((ADC_CSR)&(1<<7))== 0); // Wait till EOC
+
+                val |= (unsigned int)ADC_DRL;
+                // UARTPrintF("value = \n\r");
+                val |= (unsigned int)ADC_DRH<<8;
+                ADC_CR1 &= ~(1<<0); // ADC Stop Conversion
+                current = val & 0x03ff;
+
+                if (current > MIN_CURRENT){ //start timing current consumption
+
+                  starttijd.second = real_time.second;
+                  starttijd.minute = real_time.minute;
+                  starttijd.hour = real_time.hour;
+                  starttijd.ticker = real_time.ticker;
+                  startmeting = 1;
+                }
+                if ((current < MIN_CURRENT) && (startmeting))
+                     { 
+                     periode = real_time.ticker - starttijd.ticker;
+                     startmeting = 0;
+                     }
 
 
-	tm1637DisplayDecimal(tijd->minute, 0); // display minutes 
+
+         	tm1637DisplayDecimal(tijd->minute, 0); // display minutes 
 	}
 }
