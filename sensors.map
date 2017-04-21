@@ -29,9 +29,9 @@ CABS                                00000000    00000000 =           0. bytes (A
      00000000  s_SSEG                          
      00000001  s_DATA                          
      00000003  l_GSFINAL                       
-     00000006  l_DATA                          
-     00000007  s_INITIALIZED                   
      00000008  s_REG_BANK_1                    
+     0000000A  l_DATA                          
+     0000000B  s_INITIALIZED                   
      00000010  s_REG_BANK_2                    
      00000018  s_BIT_BANK                      
      00000018  s_ISEG                          
@@ -44,12 +44,12 @@ CABS                                00000000    00000000 =           0. bytes (A
      00000083  l_HOME                          
      00000100  l_IRAM                          
      00000100  l_SSEG                          
-     00000558  l_CODE                          
+     00000565  l_CODE                          
      00008000  s_HOME                          
      00008083  s_GSINIT                        
      0000809D  s_GSFINAL                       
      000080A0  s_CODE                          
-     000085F8  s_INITIALIZER                   
+     00008605  s_INITIALIZER                   
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 2.
 Hexadecimal  [32-Bits]
@@ -85,13 +85,15 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-DATA                                00000001    00000006 =           6. bytes (REL,CON)
+DATA                                00000001    0000000A =          10. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     00000001  _internteller                      sensors
-     00000003  _seconden                          sensors
-     00000005  _minuten                           sensors
+     00000001  _real_time                         sensors
+     00000005  _internteller                      sensors
+     00000007  _seconden                          sensors
+     00000009  _minuten                           sensors
+
 ASxxxx Linker V03.00 + NoICE + sdld,  page 6.
 Hexadecimal  [32-Bits]
 
@@ -124,7 +126,7 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-CODE                                000080A0    00000558 =        1368. bytes (REL,CON)
+CODE                                000080A0    00000565 =        1381. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
@@ -145,20 +147,21 @@ CODE                                000080A0    00000558 =        1368. bytes (R
      000082F6  _InitializeUART                    sensors
      0000836F  _tm1637Init                        sensors
      00008376  _tm1637DisplayDecimal              sensors
-     00008414  _tm1637SetBrightness               sensors
-     00008426  __tm1637Start                      sensors
-     00008438  __tm1637Stop                       sensors
-     0000845F  __tm1637ReadResult                 sensors
-     0000847A  __tm1637WriteByte                  sensors
-     000084B8  __tm1637ClkHigh                    sensors
-     000084C0  __tm1637ClkLow                     sensors
-     000084C8  __tm1637DioHigh                    sensors
-     000084D0  __tm1637DioLow                     sensors
-     000084D8  _clock                             sensors
-     00008501  _timer_isr                         sensors
-     00008534  _main                              sensors
-     00008591  _segmentMap                        sensors
-     000085A2  __mulint                           _mulint
+     0000840F  _tm1637SetBrightness               sensors
+     00008421  __tm1637Start                      sensors
+     00008433  __tm1637Stop                       sensors
+     0000845A  __tm1637ReadResult                 sensors
+     00008475  __tm1637WriteByte                  sensors
+     000084B3  __tm1637ClkHigh                    sensors
+     000084BB  __tm1637ClkLow                     sensors
+     000084C3  __tm1637DioHigh                    sensors
+     000084CB  __tm1637DioLow                     sensors
+     000084D3  _clock                             sensors
+     000084FC  _rt_one_second_increment           sensors
+     0000851F  _timer_isr                         sensors
+     0000853D  _main                              sensors
+     0000859E  _segmentMap                        sensors
+     000085AF  __mulint                           _mulint
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 10.
 

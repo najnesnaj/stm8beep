@@ -8,7 +8,16 @@
 #define I2C_WRITE       0
 
 
+typedef unsigned char u8;
 
+typedef struct {        // real time information field structure 
+        u8 second;  
+        u8 minute;  
+        u8 hour;  
+        u8 day;  
+} st_time; 
+
+st_time real_time;
 
 
 typedef unsigned char UCHAR;
@@ -255,9 +264,9 @@ void tm1637Init(void)
 
 
 
-void tm1637DisplayDecimal(long TT,unsigned int displaySeparator)
+void tm1637DisplayDecimal(u8 TT,unsigned int displaySeparator)
 { unsigned int ii;
-	unsigned int v = TT & 0x0000FFFF;
+	unsigned int v = TT ;
 	unsigned char digitArr[4];
 
 
@@ -441,25 +450,41 @@ t->hour= 0;
 
 #define BEEP_ISR 6 // port D
 
-void timer_isr(void) __interrupt(BEEP_ISR) {
-	if (++internteller > 500) {
-		internteller=0;
-		++seconden;
-	}
-
-
-	if (seconden > 59){
-		seconden=0;
-		++minuten;
-
-	}
+void rt_one_second_increment (st_time *t) {
+        if(++t->second > 59) {
+                t->second= 0;
+                if(++t->minute > 59) {
+                        t->minute= 0;
+                        if(++t->hour > 23) {
+                                t->hour= 0;
+                        }
+                }
+        }
 }
 
 
 
 
 
+void timer_isr(void) __interrupt(BEEP_ISR) {
+	if (++internteller > 500) {
+		internteller=0;
+        rt_one_second_increment(&real_time);
+
+//		++seconden;
+	}
+
+}
+
+
+
+
+
+
+
 int main () {
+
+        st_time *tijd;
 	int maxValue = 0;          // store max value here
 	int minValue = 10;          // store max value here
 	unsigned int val=0;
@@ -478,7 +503,7 @@ int main () {
 	EXTI_CR1 &= ~(1<<6); //Port D external sensitivity bits7:6 10: Falling edge only
 
 
-
+tijd = &real_time;
 
 	// Configure timer
 	// 1000 ticks per second
@@ -497,7 +522,6 @@ int main () {
 	while (1) {
 
 
-
-		tm1637DisplayDecimal(minuten, 0); // display minutes 
+	tm1637DisplayDecimal(tijd->minute, 0); // display minutes 
 	}
 }
