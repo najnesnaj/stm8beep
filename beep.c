@@ -13,11 +13,11 @@
 typedef unsigned char u8;
 
 typedef struct {        // real time information field structure 
-        u8 second;  
-        u8 minute;  
-        u8 hour;  
-        u8 day;  
-        long ticker; 
+	u8 second;  
+	u8 minute;  
+	u8 hour;  
+	u8 day;  
+	long ticker; 
 } st_time; 
 
 st_time real_time;
@@ -80,24 +80,6 @@ void print_UCHAR_hex (unsigned char buffer) {
 	UARTPrintF (message);
 }
 
-void i2c_send_address (UCHAR addr, UCHAR mode) {
-	volatile int reg;
-	reg = I2C_SR1;
-	I2C_DR = (addr << 1) | mode;
-	if (mode == I2C_READ) {
-		I2C_OARL = 0;
-		I2C_OARH = 0;
-	}
-
-	while ((I2C_SR1 & I2C_ADDR) == 0);
-	if (mode == I2C_READ)
-		UNSET (I2C_SR1, I2C_ADDR);
-}
-
-void i2c_set_start_ack (void) {
-	I2C_CR2 = I2C_ACK | I2C_START;
-	while ((I2C_SR1 & I2C_SB) == 0);
-}
 
 //
 //  Send a message to the debug port (UART1).
@@ -341,16 +323,16 @@ void _tm1637DioLow(void)
 #define BEEP_ISR 6 // port D
 
 void rt_one_second_increment (st_time *t) {
-  ++t->ticker; //   
-        if(++t->second > 59) {
-                t->second= 0;
-                if(++t->minute > 59) {
-                        t->minute= 0;
-                        if(++t->hour > 23) {
-                                t->hour= 0;
-                        }
-                }
-        }
+	++t->ticker; //   
+	if(++t->second > 59) {
+		t->second= 0;
+		if(++t->minute > 59) {
+			t->minute= 0;
+			if(++t->hour > 23) {
+				t->hour= 0;
+			}
+		}
+	}
 }
 
 
@@ -360,9 +342,9 @@ unsigned int internteller;
 void timer_isr(void) __interrupt(BEEP_ISR) {
 	if (++internteller > 500) {
 		internteller=0;
-        rt_one_second_increment(&real_time);
+		rt_one_second_increment(&real_time);
 
-//		++seconden;
+		//		++seconden;
 	}
 
 }
@@ -371,36 +353,56 @@ void timer_isr(void) __interrupt(BEEP_ISR) {
 #define EEPROM_START_ADDR       0x4000
 #define EEPROM_END_ADDR         0x4280 
 //640 bytes of eeprom
-
-
-/*  
-void eeprom_write(uint16_t addr, uint8_t *buf, uint16_t len) {
- //    unlock EEPROM 
-    FLASH_DUKR = FLASH_DUKR_KEY1;
-    FLASH_DUKR = FLASH_DUKR_KEY2;
-    while (!(FLASH_IAPSR & (1 << FLASH_IAPSR_DUL)));
-    // write data from buffer 
-    for (uint16_t i = 0; i < len; i++, addr++) {
-        _MEM_(addr) = buf[i];
-        while (!(FLASH_IAPSR & (1 << FLASH_IAPSR_EOP)));
-    }
-    //lock EEPROM 
-    FLASH_IAPSR &= ~(1 << FLASH_IAPSR_DUL);
+#define FLASH_CR2_OPT 7
+#define FLASH_NCR2_NOPT 7
+/*
+   void eeprom_write(unsigned int addr, unsigned short *buf, unsigned int len) {
+//    unlock EEPROM 
+FLASH_DUKR = FLASH_DUKR_KEY1;
+FLASH_DUKR = FLASH_DUKR_KEY2;
+while (!(FLASH_IAPSR & (1 << FLASH_IAPSR_DUL)));
+// write data from buffer 
+for (uint16_t i = 0; i < len; i++, addr++) {
+_MEM_(addr) = buf[i];
+while (!(FLASH_IAPSR & (1 << FLASH_IAPSR_EOP)));
 }
-*/
-
+//lock EEPROM 
+FLASH_IAPSR &= ~(1 << FLASH_IAPSR_DUL);
+}
+ */
 //reading eeprom stm8flash -c stlinkv2 -p stm8s103f3 -s eeprom -r dump.bin
-
+void option_bytes_unlock() {
+	FLASH_CR2 |= (1 << FLASH_CR2_OPT);
+	FLASH_NCR2 &= ~(1 << FLASH_NCR2_NOPT);
+}
 
 
 int main () {
-        unsigned int addr;
-        st_time *tijd;
-        st_time starttijd;
-        u8 startmeting=0;	
-        unsigned int val=0, current,periode;
+	unsigned int addr;
+	st_time *tijd;
+	st_time starttijd;
+	u8 startmeting=0;	
+	unsigned int val=0, current,periode;
 	unsigned int displaymode=1;
 	InitializeSystemClock();
+
+
+	option_bytes_unlock();
+	//EEPROM unlock
+	FLASH_DUKR = FLASH_DUKR_KEY1;
+	FLASH_DUKR = FLASH_DUKR_KEY2;
+	while (!(FLASH_IAPSR & (1 << FLASH_IAPSR_DUL)));
+	for (addr = EEPROM_START_ADDR; addr < EEPROM_END_ADDR; addr++)
+		_MEM_(addr) = 0x11;
+
+	//lock EEPROM
+	FLASH_IAPSR &= ~(1 << FLASH_IAPSR_DUL);
+
+
+
+
+
+
 	//display on PD2 PD3
 	BEEP_CSR = (0<<7) | (0<<6) | (1<<5) | 0x1E;
 	PD_DDR = (1 << 3) | (1 << 2); // output mode
@@ -414,25 +416,14 @@ int main () {
 	EXTI_CR1 &= ~(1<<6); //Port D external sensitivity bits7:6 10: Falling edge only
 
 
-        tijd = &real_time;
+	tijd = &real_time;
 
 	// Configure timer
 	// 1000 ticks per second
-//	TIM1_PSCRH = 0x3e;
-//	TIM1_PSCRL = 0x80;
 
 	tm1637Init();
 
 	InitializeUART();
-
-//EEPROM
-    FLASH_DUKR = FLASH_DUKR_KEY1;
-    FLASH_DUKR = FLASH_DUKR_KEY2;
-    while (!(FLASH_IAPSR & (1 << FLASH_IAPSR_DUL)));
-    for (addr = EEPROM_START_ADDR; addr < EEPROM_END_ADDR; addr++)
-        _MEM_(addr) = 0xAA;
-
-
 
 
 	/* Enable interrupts */
@@ -441,34 +432,38 @@ int main () {
 
 
 	while (1) {
-                ADC_CR1 |= ADC_ADON; // ADC ON
-                ADC_CSR |= ((0x0F)&2); // select channel = 2 = PC4
-                ADC_CR2 |= ADC_ALIGN; // Right Aligned Data
-                ADC_CR1 |= ADC_ADON; // start conversion
-                while(((ADC_CSR)&(1<<7))== 0); // Wait till EOC
+		ADC_CR1 |= ADC_ADON; // ADC ON
+		ADC_CSR |= ((0x0F)&2); // select channel = 2 = PC4
+		ADC_CR2 |= ADC_ALIGN; // Right Aligned Data
+		ADC_CR1 |= ADC_ADON; // start conversion
+		while(((ADC_CSR)&(1<<7))== 0); // Wait till EOC
 
-                val |= (unsigned int)ADC_DRL;
-                // UARTPrintF("value = \n\r");
-                val |= (unsigned int)ADC_DRH<<8;
-                ADC_CR1 &= ~(1<<0); // ADC Stop Conversion
-                current = val & 0x03ff;
+		val |= (unsigned int)ADC_DRL;
+		// UARTPrintF("value = \n\r");
+		val |= (unsigned int)ADC_DRH<<8;
+		ADC_CR1 &= ~(1<<0); // ADC Stop Conversion
+		current = val & 0x03ff;
 
-                if (current > MIN_CURRENT){ //start timing current consumption
+		if (current > MIN_CURRENT){ //start timing current consumption
 
-                  starttijd.second = real_time.second;
-                  starttijd.minute = real_time.minute;
-                  starttijd.hour = real_time.hour;
-                  starttijd.ticker = real_time.ticker;
-                  startmeting = 1;
+			starttijd.second = real_time.second;
+			starttijd.minute = real_time.minute;
+			starttijd.hour = real_time.hour;
+			starttijd.ticker = real_time.ticker;
+			startmeting = 1;
+		}
+		if ((current < MIN_CURRENT) && (startmeting)) //stop timing current consumption
+		{ 
+			periode += real_time.ticker - starttijd.ticker; //periode in seconds that application draws current
+			startmeting = 0;
+		}
+                if (real_time.hour == 1)
+                {
+                        periode = 0;
+                        // volt * ampere * (periode / 3600)   
                 }
-                if ((current < MIN_CURRENT) && (startmeting))
-                     { 
-                     periode = real_time.ticker - starttijd.ticker;
-                     startmeting = 0;
-                     }
 
 
-
-         	tm1637DisplayDecimal(tijd->minute, 0); // display minutes 
+		tm1637DisplayDecimal(tijd->minute, 0); // display minutes 
 	}
 }

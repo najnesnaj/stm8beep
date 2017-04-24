@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by SDCC : free open source ANSI-C Compiler
-; Version 3.4.0 #8981 (Jul 11 2014) (Linux)
-; This file was generated Fri Apr 21 15:49:19 2017
+; Version 3.4.0 #8981 (Jul  5 2014) (Linux)
+; This file was generated Sun Apr 23 20:27:52 2017
 ;--------------------------------------------------------
 	.module beep
 	.optsdcc -mstm8
@@ -11,14 +11,13 @@
 ;--------------------------------------------------------
 	.globl _segmentMap
 	.globl _main
+	.globl _option_bytes_unlock
 	.globl _timer_isr
 	.globl _rt_one_second_increment
 	.globl _tm1637DisplayDecimal
 	.globl _tm1637Init
 	.globl _InitializeUART
 	.globl _print_byte_hex
-	.globl _i2c_set_start_ack
-	.globl _i2c_send_address
 	.globl _print_UCHAR_hex
 	.globl _UARTPrintF
 	.globl _delay
@@ -347,464 +346,394 @@ _print_UCHAR_hex:
 	addw	sp, #2
 	addw	sp, #12
 	ret
-;	beep.c: 83: void i2c_send_address (UCHAR addr, UCHAR mode) {
-;	-----------------------------------------
-;	 function i2c_send_address
-;	-----------------------------------------
-_i2c_send_address:
-	sub	sp, #3
-;	beep.c: 85: reg = I2C_SR1;
-	ldw	x, #0x5217
-	ld	a, (x)
-	clrw	x
-	ld	xl, a
-	ldw	(0x01, sp), x
-;	beep.c: 86: I2C_DR = (addr << 1) | mode;
-	ld	a, (0x06, sp)
-	sll	a
-	or	a, (0x07, sp)
-	ldw	x, #0x5216
-	ld	(x), a
-;	beep.c: 87: if (mode == I2C_READ) {
-	ld	a, (0x07, sp)
-	cp	a, #0x01
-	jrne	00127$
-	ld	a, #0x01
-	ld	(0x03, sp), a
-	jra	00128$
-00127$:
-	clr	(0x03, sp)
-00128$:
-	tnz	(0x03, sp)
-	jreq	00103$
-;	beep.c: 88: I2C_OARL = 0;
-	ldw	x, #0x5213
-	clr	(x)
-;	beep.c: 89: I2C_OARH = 0;
-	ldw	x, #0x5214
-	clr	(x)
-;	beep.c: 92: while ((I2C_SR1 & I2C_ADDR) == 0);
-00103$:
-;	beep.c: 85: reg = I2C_SR1;
-	ldw	x, #0x5217
-	ld	a, (x)
-;	beep.c: 92: while ((I2C_SR1 & I2C_ADDR) == 0);
-	bcp	a, #0x02
-	jreq	00103$
-;	beep.c: 93: if (mode == I2C_READ)
-	tnz	(0x03, sp)
-	jreq	00108$
-;	beep.c: 94: UNSET (I2C_SR1, I2C_ADDR);
-	and	a, #0xfd
-	ldw	x, #0x5217
-	ld	(x), a
-00108$:
-	addw	sp, #3
-	ret
-;	beep.c: 97: void i2c_set_start_ack (void) {
-;	-----------------------------------------
-;	 function i2c_set_start_ack
-;	-----------------------------------------
-_i2c_set_start_ack:
-;	beep.c: 98: I2C_CR2 = I2C_ACK | I2C_START;
-	ldw	x, #0x5211
-	ld	a, #0x05
-	ld	(x), a
-;	beep.c: 99: while ((I2C_SR1 & I2C_SB) == 0);
-00101$:
-	ldw	x, #0x5217
-	ld	a, (x)
-	srl	a
-	jrnc	00101$
-	ret
-;	beep.c: 106: void print_byte_hex (unsigned char buffer) {
+;	beep.c: 88: void print_byte_hex (unsigned char buffer) {
 ;	-----------------------------------------
 ;	 function print_byte_hex
 ;	-----------------------------------------
 _print_byte_hex:
 	sub	sp, #12
-;	beep.c: 109: a = (buffer >> 4);
+;	beep.c: 91: a = (buffer >> 4);
 	ld	a, (0x0f, sp)
 	swap	a
 	and	a, #0x0f
 	clrw	x
 	ld	xl, a
-;	beep.c: 110: if (a > 9)
+;	beep.c: 92: if (a > 9)
 	cpw	x, #0x0009
 	jrsle	00102$
-;	beep.c: 111: a = a + 'a' - 10;
+;	beep.c: 93: a = a + 'a' - 10;
 	addw	x, #0x0057
-	ldw	(0x03, sp), x
+	ldw	(0x0b, sp), x
 	jra	00103$
 00102$:
-;	beep.c: 113: a += '0'; 
+;	beep.c: 95: a += '0'; 
 	addw	x, #0x0030
-	ldw	(0x03, sp), x
+	ldw	(0x0b, sp), x
 00103$:
-;	beep.c: 114: b = buffer & 0x0f;
+;	beep.c: 96: b = buffer & 0x0f;
 	ld	a, (0x0f, sp)
 	and	a, #0x0f
 	clrw	x
 	ld	xl, a
-;	beep.c: 115: if (b > 9)
+;	beep.c: 97: if (b > 9)
 	cpw	x, #0x0009
 	jrsle	00105$
-;	beep.c: 116: b = b + 'a' - 10;
+;	beep.c: 98: b = b + 'a' - 10;
 	addw	x, #0x0057
-	ldw	(0x01, sp), x
+	ldw	(0x09, sp), x
 	jra	00106$
 00105$:
-;	beep.c: 118: b += '0'; 
+;	beep.c: 100: b += '0'; 
 	addw	x, #0x0030
-	ldw	(0x01, sp), x
+	ldw	(0x09, sp), x
 00106$:
-;	beep.c: 119: message[0] = a;
+;	beep.c: 101: message[0] = a;
 	ldw	y, sp
-	addw	y, #5
-	ld	a, (0x04, sp)
+	incw	y
+	ld	a, (0x0c, sp)
 	ld	(y), a
-;	beep.c: 120: message[1] = b;
+;	beep.c: 102: message[1] = b;
 	ldw	x, y
 	incw	x
-	ld	a, (0x02, sp)
+	ld	a, (0x0a, sp)
 	ld	(x), a
-;	beep.c: 121: message[2] = 0;
+;	beep.c: 103: message[2] = 0;
 	ldw	x, y
 	incw	x
 	incw	x
 	clr	(x)
-;	beep.c: 122: UARTPrintF (message);
+;	beep.c: 104: UARTPrintF (message);
 	pushw	y
 	call	_UARTPrintF
 	addw	sp, #2
 	addw	sp, #12
 	ret
-;	beep.c: 127: void InitializeUART() {
+;	beep.c: 109: void InitializeUART() {
 ;	-----------------------------------------
 ;	 function InitializeUART
 ;	-----------------------------------------
 _InitializeUART:
-;	beep.c: 137: UART1_CR1 = 0;
+;	beep.c: 119: UART1_CR1 = 0;
 	ldw	x, #0x5234
 	clr	(x)
-;	beep.c: 138: UART1_CR2 = 0;
+;	beep.c: 120: UART1_CR2 = 0;
 	ldw	x, #0x5235
 	clr	(x)
-;	beep.c: 139: UART1_CR4 = 0;
+;	beep.c: 121: UART1_CR4 = 0;
 	ldw	x, #0x5237
 	clr	(x)
-;	beep.c: 140: UART1_CR3 = 0;
+;	beep.c: 122: UART1_CR3 = 0;
 	ldw	x, #0x5236
 	clr	(x)
-;	beep.c: 141: UART1_CR5 = 0;
+;	beep.c: 123: UART1_CR5 = 0;
 	ldw	x, #0x5238
 	clr	(x)
-;	beep.c: 142: UART1_GTR = 0;
+;	beep.c: 124: UART1_GTR = 0;
 	ldw	x, #0x5239
 	clr	(x)
-;	beep.c: 143: UART1_PSCR = 0;
+;	beep.c: 125: UART1_PSCR = 0;
 	ldw	x, #0x523a
 	clr	(x)
-;	beep.c: 147: UNSET (UART1_CR1, CR1_M);        //  8 Data bits.
+;	beep.c: 129: UNSET (UART1_CR1, CR1_M);        //  8 Data bits.
 	ldw	x, #0x5234
 	ld	a, (x)
 	and	a, #0xef
 	ld	(x), a
-;	beep.c: 148: UNSET (UART1_CR1, CR1_PCEN);     //  Disable parity.
+;	beep.c: 130: UNSET (UART1_CR1, CR1_PCEN);     //  Disable parity.
 	ldw	x, #0x5234
 	ld	a, (x)
 	and	a, #0xfb
 	ld	(x), a
-;	beep.c: 149: UNSET (UART1_CR3, CR3_STOPH);    //  1 stop bit.
+;	beep.c: 131: UNSET (UART1_CR3, CR3_STOPH);    //  1 stop bit.
 	ldw	x, #0x5236
 	ld	a, (x)
 	and	a, #0xdf
 	ld	(x), a
-;	beep.c: 150: UNSET (UART1_CR3, CR3_STOPL);    //  1 stop bit.
+;	beep.c: 132: UNSET (UART1_CR3, CR3_STOPL);    //  1 stop bit.
 	ldw	x, #0x5236
 	ld	a, (x)
 	and	a, #0xef
 	ld	(x), a
-;	beep.c: 151: UART1_BRR2 = 0x0a;      //  Set the baud rate registers to 115200 baud
+;	beep.c: 133: UART1_BRR2 = 0x0a;      //  Set the baud rate registers to 115200 baud
 	ldw	x, #0x5233
 	ld	a, #0x0a
 	ld	(x), a
-;	beep.c: 152: UART1_BRR1 = 0x08;      //  based upon a 16 MHz system clock.
+;	beep.c: 134: UART1_BRR1 = 0x08;      //  based upon a 16 MHz system clock.
 	ldw	x, #0x5232
 	ld	a, #0x08
 	ld	(x), a
-;	beep.c: 156: UNSET (UART1_CR2, CR2_TEN);      //  Disable transmit.
+;	beep.c: 138: UNSET (UART1_CR2, CR2_TEN);      //  Disable transmit.
 	ldw	x, #0x5235
 	ld	a, (x)
 	and	a, #0xf7
 	ld	(x), a
-;	beep.c: 157: UNSET (UART1_CR2, CR2_REN);      //  Disable receive.
+;	beep.c: 139: UNSET (UART1_CR2, CR2_REN);      //  Disable receive.
 	ldw	x, #0x5235
 	ld	a, (x)
 	and	a, #0xfb
 	ld	(x), a
-;	beep.c: 161: SET (UART1_CR3, CR3_CPOL);
+;	beep.c: 143: SET (UART1_CR3, CR3_CPOL);
 	ldw	x, #0x5236
 	ld	a, (x)
 	or	a, #0x04
 	ld	(x), a
-;	beep.c: 162: SET (UART1_CR3, CR3_CPHA);
+;	beep.c: 144: SET (UART1_CR3, CR3_CPHA);
 	ldw	x, #0x5236
 	ld	a, (x)
 	or	a, #0x02
 	ld	(x), a
-;	beep.c: 163: SET (UART1_CR3, CR3_LBCL);
+;	beep.c: 145: SET (UART1_CR3, CR3_LBCL);
 	bset	0x5236, #0
-;	beep.c: 167: SET (UART1_CR2, CR2_TEN);
+;	beep.c: 149: SET (UART1_CR2, CR2_TEN);
 	ldw	x, #0x5235
 	ld	a, (x)
 	or	a, #0x08
 	ld	(x), a
-;	beep.c: 168: SET (UART1_CR2, CR2_REN);
+;	beep.c: 150: SET (UART1_CR2, CR2_REN);
 	ldw	x, #0x5235
 	ld	a, (x)
 	or	a, #0x04
 	ld	(x), a
-;	beep.c: 169: UART1_CR3 = CR3_CLKEN;
+;	beep.c: 151: UART1_CR3 = CR3_CLKEN;
 	ldw	x, #0x5236
 	ld	a, #0x08
 	ld	(x), a
 	ret
-;	beep.c: 197: void tm1637Init(void)
+;	beep.c: 179: void tm1637Init(void)
 ;	-----------------------------------------
 ;	 function tm1637Init
 ;	-----------------------------------------
 _tm1637Init:
-;	beep.c: 199: tm1637SetBrightness(8);
+;	beep.c: 181: tm1637SetBrightness(8);
 	push	#0x08
 	call	_tm1637SetBrightness
 	pop	a
 	ret
-;	beep.c: 204: void tm1637DisplayDecimal(u8 TT,unsigned int displaySeparator)
+;	beep.c: 186: void tm1637DisplayDecimal(u8 TT,unsigned int displaySeparator)
 ;	-----------------------------------------
 ;	 function tm1637DisplayDecimal
 ;	-----------------------------------------
 _tm1637DisplayDecimal:
 	sub	sp, #15
-;	beep.c: 206: unsigned int v = TT ;
+;	beep.c: 188: unsigned int v = TT ;
 	clrw	x
 	ld	a, (0x12, sp)
 	ld	xl, a
 	ldw	(0x05, sp), x
-;	beep.c: 212: for (ii = 0; ii < 4; ++ii) {
+;	beep.c: 194: for (ii = 0; ii < 4; ++ii) {
 	ldw	x, sp
 	incw	x
-	ldw	(0x09, sp), x
-	ldw	x, #_segmentMap+0
 	ldw	(0x0e, sp), x
+	ldw	x, #_segmentMap+0
+	ldw	(0x0c, sp), x
 	clrw	y
 00106$:
-;	beep.c: 213: digitArr[ii] = segmentMap[v % 10];
+;	beep.c: 195: digitArr[ii] = segmentMap[v % 10];
 	ldw	x, y
-	addw	x, (0x09, sp)
-	ldw	(0x0c, sp), x
+	addw	x, (0x0e, sp)
+	ldw	(0x0a, sp), x
 	pushw	y
 	ldw	x, (0x07, sp)
 	ldw	y, #0x000a
 	divw	x, y
 	ldw	x, y
 	popw	y
-	addw	x, (0x0e, sp)
+	addw	x, (0x0c, sp)
 	ld	a, (x)
-	ldw	x, (0x0c, sp)
+	ldw	x, (0x0a, sp)
 	ld	(x), a
-;	beep.c: 214: if (ii == 2 && displaySeparator) {
+;	beep.c: 196: if (ii == 2 && displaySeparator) {
 	cpw	y, #0x0002
 	jrne	00102$
 	ldw	x, (0x13, sp)
 	jreq	00102$
-;	beep.c: 215: digitArr[ii] |= 1 << 7;
-	ldw	x, (0x0c, sp)
+;	beep.c: 197: digitArr[ii] |= 1 << 7;
+	ldw	x, (0x0a, sp)
 	ld	a, (x)
 	or	a, #0x80
-	ldw	x, (0x0c, sp)
+	ldw	x, (0x0a, sp)
 	ld	(x), a
 00102$:
-;	beep.c: 217: v /= 10;
+;	beep.c: 199: v /= 10;
 	pushw	y
 	ldw	x, (0x07, sp)
 	ldw	y, #0x000a
 	divw	x, y
 	popw	y
 	ldw	(0x05, sp), x
-;	beep.c: 212: for (ii = 0; ii < 4; ++ii) {
+;	beep.c: 194: for (ii = 0; ii < 4; ++ii) {
 	incw	y
 	cpw	y, #0x0004
 	jrc	00106$
-;	beep.c: 220: _tm1637Start();
+;	beep.c: 202: _tm1637Start();
 	call	__tm1637Start
-;	beep.c: 221: _tm1637WriteByte(0x40);
+;	beep.c: 203: _tm1637WriteByte(0x40);
 	push	#0x40
 	call	__tm1637WriteByte
 	pop	a
-;	beep.c: 222: _tm1637ReadResult();
+;	beep.c: 204: _tm1637ReadResult();
 	call	__tm1637ReadResult
-;	beep.c: 223: _tm1637Stop();
+;	beep.c: 205: _tm1637Stop();
 	call	__tm1637Stop
-;	beep.c: 225: _tm1637Start();
+;	beep.c: 207: _tm1637Start();
 	call	__tm1637Start
-;	beep.c: 226: _tm1637WriteByte(0xc0);
+;	beep.c: 208: _tm1637WriteByte(0xc0);
 	push	#0xc0
 	call	__tm1637WriteByte
 	pop	a
-;	beep.c: 227: _tm1637ReadResult();
+;	beep.c: 209: _tm1637ReadResult();
 	call	__tm1637ReadResult
-;	beep.c: 229: for (ii = 0; ii < 4; ++ii) {
+;	beep.c: 211: for (ii = 0; ii < 4; ++ii) {
 	clrw	x
 	ldw	(0x07, sp), x
 00108$:
-;	beep.c: 230: _tm1637WriteByte(digitArr[3 - ii]);
+;	beep.c: 212: _tm1637WriteByte(digitArr[3 - ii]);
 	ld	a, (0x08, sp)
-	ld	(0x0b, sp), a
+	ld	(0x09, sp), a
 	ld	a, #0x03
-	sub	a, (0x0b, sp)
+	sub	a, (0x09, sp)
 	clrw	x
 	ld	xl, a
-	addw	x, (0x09, sp)
+	addw	x, (0x0e, sp)
 	ld	a, (x)
 	push	a
 	call	__tm1637WriteByte
 	pop	a
-;	beep.c: 231: _tm1637ReadResult();
+;	beep.c: 213: _tm1637ReadResult();
 	call	__tm1637ReadResult
-;	beep.c: 229: for (ii = 0; ii < 4; ++ii) {
+;	beep.c: 211: for (ii = 0; ii < 4; ++ii) {
 	ldw	x, (0x07, sp)
 	incw	x
 	ldw	(0x07, sp), x
 	ldw	x, (0x07, sp)
 	cpw	x, #0x0004
 	jrc	00108$
-;	beep.c: 234: _tm1637Stop();
+;	beep.c: 216: _tm1637Stop();
 	call	__tm1637Stop
 	addw	sp, #15
 	ret
-;	beep.c: 239: void tm1637SetBrightness(char brightness)
+;	beep.c: 221: void tm1637SetBrightness(char brightness)
 ;	-----------------------------------------
 ;	 function tm1637SetBrightness
 ;	-----------------------------------------
 _tm1637SetBrightness:
-;	beep.c: 246: _tm1637Start();
+;	beep.c: 228: _tm1637Start();
 	call	__tm1637Start
-;	beep.c: 247: _tm1637WriteByte(0x87 + brightness);
+;	beep.c: 229: _tm1637WriteByte(0x87 + brightness);
 	ld	a, (0x03, sp)
 	add	a, #0x87
 	push	a
 	call	__tm1637WriteByte
 	pop	a
-;	beep.c: 248: _tm1637ReadResult();
+;	beep.c: 230: _tm1637ReadResult();
 	call	__tm1637ReadResult
-;	beep.c: 249: _tm1637Stop();
+;	beep.c: 231: _tm1637Stop();
 	jp	__tm1637Stop
-;	beep.c: 252: void _tm1637Start(void)
+;	beep.c: 234: void _tm1637Start(void)
 ;	-----------------------------------------
 ;	 function _tm1637Start
 ;	-----------------------------------------
 __tm1637Start:
-;	beep.c: 254: _tm1637ClkHigh();
+;	beep.c: 236: _tm1637ClkHigh();
 	call	__tm1637ClkHigh
-;	beep.c: 255: _tm1637DioHigh();
+;	beep.c: 237: _tm1637DioHigh();
 	call	__tm1637DioHigh
+;	beep.c: 238: delay(5);
+	push	#0x05
+	push	#0x00
+	call	_delay
+	addw	sp, #2
+;	beep.c: 239: _tm1637DioLow();
+	jp	__tm1637DioLow
+;	beep.c: 242: void _tm1637Stop(void)
+;	-----------------------------------------
+;	 function _tm1637Stop
+;	-----------------------------------------
+__tm1637Stop:
+;	beep.c: 244: _tm1637ClkLow();
+	call	__tm1637ClkLow
+;	beep.c: 245: delay(5);
+	push	#0x05
+	push	#0x00
+	call	_delay
+	addw	sp, #2
+;	beep.c: 246: _tm1637DioLow();
+	call	__tm1637DioLow
+;	beep.c: 247: delay(5);
+	push	#0x05
+	push	#0x00
+	call	_delay
+	addw	sp, #2
+;	beep.c: 248: _tm1637ClkHigh();
+	call	__tm1637ClkHigh
+;	beep.c: 249: delay(5);
+	push	#0x05
+	push	#0x00
+	call	_delay
+	addw	sp, #2
+;	beep.c: 250: _tm1637DioHigh();
+	jp	__tm1637DioHigh
+;	beep.c: 253: void _tm1637ReadResult(void)
+;	-----------------------------------------
+;	 function _tm1637ReadResult
+;	-----------------------------------------
+__tm1637ReadResult:
+;	beep.c: 255: _tm1637ClkLow();
+	call	__tm1637ClkLow
 ;	beep.c: 256: delay(5);
 	push	#0x05
 	push	#0x00
 	call	_delay
 	addw	sp, #2
-;	beep.c: 257: _tm1637DioLow();
-	jp	__tm1637DioLow
-;	beep.c: 260: void _tm1637Stop(void)
-;	-----------------------------------------
-;	 function _tm1637Stop
-;	-----------------------------------------
-__tm1637Stop:
-;	beep.c: 262: _tm1637ClkLow();
-	call	__tm1637ClkLow
-;	beep.c: 263: delay(5);
-	push	#0x05
-	push	#0x00
-	call	_delay
-	addw	sp, #2
-;	beep.c: 264: _tm1637DioLow();
-	call	__tm1637DioLow
-;	beep.c: 265: delay(5);
-	push	#0x05
-	push	#0x00
-	call	_delay
-	addw	sp, #2
-;	beep.c: 266: _tm1637ClkHigh();
+;	beep.c: 258: _tm1637ClkHigh();
 	call	__tm1637ClkHigh
-;	beep.c: 267: delay(5);
+;	beep.c: 259: delay(5);
 	push	#0x05
 	push	#0x00
 	call	_delay
 	addw	sp, #2
-;	beep.c: 268: _tm1637DioHigh();
-	jp	__tm1637DioHigh
-;	beep.c: 271: void _tm1637ReadResult(void)
-;	-----------------------------------------
-;	 function _tm1637ReadResult
-;	-----------------------------------------
-__tm1637ReadResult:
-;	beep.c: 273: _tm1637ClkLow();
-	call	__tm1637ClkLow
-;	beep.c: 274: delay(5);
-	push	#0x05
-	push	#0x00
-	call	_delay
-	addw	sp, #2
-;	beep.c: 276: _tm1637ClkHigh();
-	call	__tm1637ClkHigh
-;	beep.c: 277: delay(5);
-	push	#0x05
-	push	#0x00
-	call	_delay
-	addw	sp, #2
-;	beep.c: 278: _tm1637ClkLow();
+;	beep.c: 260: _tm1637ClkLow();
 	jp	__tm1637ClkLow
-;	beep.c: 281: void _tm1637WriteByte(unsigned char b)
+;	beep.c: 263: void _tm1637WriteByte(unsigned char b)
 ;	-----------------------------------------
 ;	 function _tm1637WriteByte
 ;	-----------------------------------------
 __tm1637WriteByte:
 	sub	sp, #2
-;	beep.c: 283: for (ii = 0; ii < 8; ++ii) {
+;	beep.c: 265: for (ii = 0; ii < 8; ++ii) {
 	clrw	x
 	ldw	(0x01, sp), x
 00105$:
-;	beep.c: 284: _tm1637ClkLow();
+;	beep.c: 266: _tm1637ClkLow();
 	call	__tm1637ClkLow
-;	beep.c: 285: if (b & 0x01) {
+;	beep.c: 267: if (b & 0x01) {
 	ld	a, (0x05, sp)
 	srl	a
 	jrnc	00102$
-;	beep.c: 286: _tm1637DioHigh();
+;	beep.c: 268: _tm1637DioHigh();
 	call	__tm1637DioHigh
 	jra	00103$
 00102$:
-;	beep.c: 289: _tm1637DioLow();
+;	beep.c: 271: _tm1637DioLow();
 	call	__tm1637DioLow
 00103$:
-;	beep.c: 291: delay(15);
+;	beep.c: 273: delay(15);
 	push	#0x0f
 	push	#0x00
 	call	_delay
 	addw	sp, #2
-;	beep.c: 292: b >>= 1;
+;	beep.c: 274: b >>= 1;
 	ld	a, (0x05, sp)
 	srl	a
 	ld	(0x05, sp), a
-;	beep.c: 293: _tm1637ClkHigh();
+;	beep.c: 275: _tm1637ClkHigh();
 	call	__tm1637ClkHigh
-;	beep.c: 294: delay(15);
+;	beep.c: 276: delay(15);
 	push	#0x0f
 	push	#0x00
 	call	_delay
 	addw	sp, #2
-;	beep.c: 283: for (ii = 0; ii < 8; ++ii) {
+;	beep.c: 265: for (ii = 0; ii < 8; ++ii) {
 	ldw	x, (0x01, sp)
 	incw	x
 	ldw	(0x01, sp), x
@@ -813,63 +742,63 @@ __tm1637WriteByte:
 	jrslt	00105$
 	addw	sp, #2
 	ret
-;	beep.c: 300: void _tm1637ClkHigh(void)
+;	beep.c: 282: void _tm1637ClkHigh(void)
 ;	-----------------------------------------
 ;	 function _tm1637ClkHigh
 ;	-----------------------------------------
 __tm1637ClkHigh:
-;	beep.c: 305: PD_ODR |= 1 << 2;
+;	beep.c: 287: PD_ODR |= 1 << 2;
 	ldw	x, #0x500f
 	ld	a, (x)
 	or	a, #0x04
 	ld	(x), a
 	ret
-;	beep.c: 308: void _tm1637ClkLow(void)
+;	beep.c: 290: void _tm1637ClkLow(void)
 ;	-----------------------------------------
 ;	 function _tm1637ClkLow
 ;	-----------------------------------------
 __tm1637ClkLow:
-;	beep.c: 312: PD_ODR &= ~(1 << 2);
+;	beep.c: 294: PD_ODR &= ~(1 << 2);
 	ldw	x, #0x500f
 	ld	a, (x)
 	and	a, #0xfb
 	ld	(x), a
 	ret
-;	beep.c: 318: void _tm1637DioHigh(void)
+;	beep.c: 300: void _tm1637DioHigh(void)
 ;	-----------------------------------------
 ;	 function _tm1637DioHigh
 ;	-----------------------------------------
 __tm1637DioHigh:
-;	beep.c: 322: PD_ODR |= 1 << 3;
+;	beep.c: 304: PD_ODR |= 1 << 3;
 	ldw	x, #0x500f
 	ld	a, (x)
 	or	a, #0x08
 	ld	(x), a
 	ret
-;	beep.c: 326: void _tm1637DioLow(void)
+;	beep.c: 308: void _tm1637DioLow(void)
 ;	-----------------------------------------
 ;	 function _tm1637DioLow
 ;	-----------------------------------------
 __tm1637DioLow:
-;	beep.c: 328: PD_ODR &= ~(1 << 3);
+;	beep.c: 310: PD_ODR &= ~(1 << 3);
 	ldw	x, #0x500f
 	ld	a, (x)
 	and	a, #0xf7
 	ld	(x), a
 	ret
-;	beep.c: 343: void rt_one_second_increment (st_time *t) {
+;	beep.c: 325: void rt_one_second_increment (st_time *t) {
 ;	-----------------------------------------
 ;	 function rt_one_second_increment
 ;	-----------------------------------------
 _rt_one_second_increment:
 	sub	sp, #8
-;	beep.c: 344: ++t->ticker; //   
+;	beep.c: 326: ++t->ticker; //   
 	ldw	y, (0x0b, sp)
-	ldw	(0x05, sp), y
-	ldw	x, (0x05, sp)
+	ldw	(0x01, sp), y
+	ldw	x, (0x01, sp)
 	addw	x, #0x0004
-	ldw	(0x07, sp), x
-	ldw	x, (0x07, sp)
+	ldw	(0x03, sp), x
+	ldw	x, (0x03, sp)
 	ld	a, (0x3, x)
 	ld	yl, a
 	ld	a, (0x2, x)
@@ -878,36 +807,36 @@ _rt_one_second_increment:
 	addw	y, #0x0001
 	ld	a, xl
 	adc	a, #0x00
-	ld	(0x02, sp), a
+	ld	(0x06, sp), a
 	ld	a, xh
 	adc	a, #0x00
-	ld	(0x01, sp), a
-	ldw	x, (0x07, sp)
+	ld	(0x05, sp), a
+	ldw	x, (0x03, sp)
 	ldw	(0x2, x), y
-	ldw	y, (0x01, sp)
+	ldw	y, (0x05, sp)
 	ldw	(x), y
-;	beep.c: 345: if(++t->second > 59) {
-	ldw	x, (0x05, sp)
+;	beep.c: 327: if(++t->second > 59) {
+	ldw	x, (0x01, sp)
 	ld	a, (x)
 	inc	a
 	ld	(x), a
 	cp	a, #0x3b
 	jrule	00107$
-;	beep.c: 346: t->second= 0;
-	ldw	x, (0x05, sp)
+;	beep.c: 328: t->second= 0;
+	ldw	x, (0x01, sp)
 	clr	(x)
-;	beep.c: 347: if(++t->minute > 59) {
-	ldw	x, (0x05, sp)
+;	beep.c: 329: if(++t->minute > 59) {
+	ldw	x, (0x01, sp)
 	incw	x
 	ld	a, (x)
 	inc	a
 	ld	(x), a
 	cp	a, #0x3b
 	jrule	00107$
-;	beep.c: 348: t->minute= 0;
+;	beep.c: 330: t->minute= 0;
 	clr	(x)
-;	beep.c: 349: if(++t->hour > 23) {
-	ldw	x, (0x05, sp)
+;	beep.c: 331: if(++t->hour > 23) {
+	ldw	x, (0x01, sp)
 	incw	x
 	incw	x
 	ld	a, (x)
@@ -915,144 +844,185 @@ _rt_one_second_increment:
 	ld	(x), a
 	cp	a, #0x17
 	jrule	00107$
-;	beep.c: 350: t->hour= 0;
+;	beep.c: 332: t->hour= 0;
 	clr	(x)
 00107$:
 	addw	sp, #8
 	ret
-;	beep.c: 360: void timer_isr(void) __interrupt(BEEP_ISR) {
+;	beep.c: 342: void timer_isr(void) __interrupt(BEEP_ISR) {
 ;	-----------------------------------------
 ;	 function timer_isr
 ;	-----------------------------------------
 _timer_isr:
-;	beep.c: 361: if (++internteller > 500) {
+;	beep.c: 343: if (++internteller > 500) {
 	ldw	x, _internteller+0
 	incw	x
 	ldw	_internteller+0, x
 	cpw	x, #0x01f4
 	jrule	00103$
-;	beep.c: 362: internteller=0;
+;	beep.c: 344: internteller=0;
 	clr	_internteller+1
 	clr	_internteller+0
-;	beep.c: 363: rt_one_second_increment(&real_time);
+;	beep.c: 345: rt_one_second_increment(&real_time);
 	ldw	x, #_real_time+0
 	pushw	x
 	call	_rt_one_second_increment
 	addw	sp, #2
 00103$:
 	iret
-;	beep.c: 396: int main () {
+;	beep.c: 374: void option_bytes_unlock() {
+;	-----------------------------------------
+;	 function option_bytes_unlock
+;	-----------------------------------------
+_option_bytes_unlock:
+;	beep.c: 375: FLASH_CR2 |= (1 << FLASH_CR2_OPT);
+	bset	0x505b, #7
+;	beep.c: 376: FLASH_NCR2 &= ~(1 << FLASH_NCR2_NOPT);
+	bres	0x505c, #7
+	ret
+;	beep.c: 380: int main () {
 ;	-----------------------------------------
 ;	 function main
 ;	-----------------------------------------
 _main:
 	sub	sp, #29
-;	beep.c: 400: u8 startmeting=0;	
-	clr	(0x05, sp)
-;	beep.c: 401: unsigned int val=0, current,periode;
+;	beep.c: 384: u8 startmeting=0;	
+	clr	(0x01, sp)
+;	beep.c: 385: unsigned int val=0, current,periode;
 	clrw	x
 	ldw	(0x1c, sp), x
-;	beep.c: 403: InitializeSystemClock();
+;	beep.c: 387: InitializeSystemClock();
 	call	_InitializeSystemClock
-;	beep.c: 405: BEEP_CSR = (0<<7) | (0<<6) | (1<<5) | 0x1E;
-	ldw	x, #0x50f3
-	ld	a, #0x3e
-	ld	(x), a
-;	beep.c: 406: PD_DDR = (1 << 3) | (1 << 2); // output mode
-	ldw	x, #0x5011
-	ld	a, #0x0c
-	ld	(x), a
-;	beep.c: 408: PD_DDR &=  ~(1 << 4); //PD4 input
-	ldw	x, #0x5011
-	ld	a, (x)
-	and	a, #0xef
-	ld	(x), a
-;	beep.c: 409: PD_CR1 = (1 << 3) | (1 << 2); // push-pull
-	ldw	x, #0x5012
-	ld	a, #0x0c
-	ld	(x), a
-;	beep.c: 410: PD_CR1 &= ~(1 << 4); // input with float
-	ldw	x, #0x5012
-	ld	a, (x)
-	and	a, #0xef
-	ld	(x), a
-;	beep.c: 411: PD_CR2 = (1 << 3) | (1 << 2) | (1<< 4); // up to 10MHz speed + interrupt enabled 
-	ldw	x, #0x5013
-	ld	a, #0x1c
-	ld	(x), a
-;	beep.c: 413: EXTI_CR1 = (1<<7); //Port D external sensitivity bits7:6 10: Falling edge only
-	ldw	x, #0x50a0
-	ld	a, #0x80
-	ld	(x), a
-;	beep.c: 414: EXTI_CR1 &= ~(1<<6); //Port D external sensitivity bits7:6 10: Falling edge only
-	ldw	x, #0x50a0
-	ld	a, (x)
-	and	a, #0xbf
-	ld	(x), a
-;	beep.c: 417: tijd = &real_time;
-	ldw	x, #_real_time+0
-	ldw	(0x1a, sp), x
-	ld	a, (0x1a, sp)
-	push	a
-	ld	a, (0x1c, sp)
-	ld	(0x10, sp), a
-	pop	a
-	ld	(0x0e, sp), a
-;	beep.c: 424: tm1637Init();
-	call	_tm1637Init
-;	beep.c: 426: InitializeUART();
-	call	_InitializeUART
-;	beep.c: 429: FLASH_DUKR = FLASH_DUKR_KEY1;
+;	beep.c: 390: option_bytes_unlock();
+	call	_option_bytes_unlock
+;	beep.c: 392: tm1637DisplayDecimal(1, 0); // display minutes
+	clrw	x
+	pushw	x
+	push	#0x01
+	call	_tm1637DisplayDecimal
+	addw	sp, #3
+;	beep.c: 393: FLASH_DUKR = FLASH_DUKR_KEY1;
 	ldw	x, #0x5064
 	ld	a, #0xae
 	ld	(x), a
-;	beep.c: 430: FLASH_DUKR = FLASH_DUKR_KEY2;
+;	beep.c: 394: FLASH_DUKR = FLASH_DUKR_KEY2;
 	ldw	x, #0x5064
 	ld	a, #0x56
 	ld	(x), a
-;	beep.c: 431: while (!(FLASH_IAPSR & (1 << FLASH_IAPSR_DUL)));
+;	beep.c: 395: while (!(FLASH_IAPSR & (1 << FLASH_IAPSR_DUL)));
 00101$:
 	ldw	x, #0x505f
 	ld	a, (x)
 	bcp	a, #0x08
 	jreq	00101$
-;	beep.c: 432: for (addr = EEPROM_START_ADDR; addr < EEPROM_END_ADDR; addr++)
+;	beep.c: 396: tm1637DisplayDecimal(2, 0); // display minutes
+	clrw	x
+	pushw	x
+	push	#0x02
+	call	_tm1637DisplayDecimal
+	addw	sp, #3
+;	beep.c: 397: for (addr = EEPROM_START_ADDR; addr < EEPROM_END_ADDR; addr++)
 	ldw	x, #0x4000
 00116$:
-;	beep.c: 433: _MEM_(addr) = 0xAA;
+;	beep.c: 398: _MEM_(addr) = 0x1A;
 	ldw	y, x
-	ld	a, #0xaa
+	ld	a, #0x1a
 	ld	(0x1, y), a
 	clr	(y)
-;	beep.c: 432: for (addr = EEPROM_START_ADDR; addr < EEPROM_END_ADDR; addr++)
+;	beep.c: 397: for (addr = EEPROM_START_ADDR; addr < EEPROM_END_ADDR; addr++)
 	incw	x
 	cpw	x, #0x4280
 	jrc	00116$
-;	beep.c: 439: __asm__("rim");
+;	beep.c: 399: tm1637DisplayDecimal(3, 0); // display minutes
+	clrw	x
+	pushw	x
+	push	#0x03
+	call	_tm1637DisplayDecimal
+	addw	sp, #3
+;	beep.c: 402: FLASH_IAPSR &= ~(1 << FLASH_IAPSR_DUL);
+	ldw	x, #0x505f
+	ld	a, (x)
+	and	a, #0xf7
+	ld	(x), a
+;	beep.c: 404: tm1637DisplayDecimal(4, 0); // display minutes
+	clrw	x
+	pushw	x
+	push	#0x04
+	call	_tm1637DisplayDecimal
+	addw	sp, #3
+;	beep.c: 411: BEEP_CSR = (0<<7) | (0<<6) | (1<<5) | 0x1E;
+	ldw	x, #0x50f3
+	ld	a, #0x3e
+	ld	(x), a
+;	beep.c: 412: PD_DDR = (1 << 3) | (1 << 2); // output mode
+	ldw	x, #0x5011
+	ld	a, #0x0c
+	ld	(x), a
+;	beep.c: 414: PD_DDR &=  ~(1 << 4); //PD4 input
+	ldw	x, #0x5011
+	ld	a, (x)
+	and	a, #0xef
+	ld	(x), a
+;	beep.c: 415: PD_CR1 = (1 << 3) | (1 << 2); // push-pull
+	ldw	x, #0x5012
+	ld	a, #0x0c
+	ld	(x), a
+;	beep.c: 416: PD_CR1 &= ~(1 << 4); // input with float
+	ldw	x, #0x5012
+	ld	a, (x)
+	and	a, #0xef
+	ld	(x), a
+;	beep.c: 417: PD_CR2 = (1 << 3) | (1 << 2) | (1<< 4); // up to 10MHz speed + interrupt enabled 
+	ldw	x, #0x5013
+	ld	a, #0x1c
+	ld	(x), a
+;	beep.c: 419: EXTI_CR1 = (1<<7); //Port D external sensitivity bits7:6 10: Falling edge only
+	ldw	x, #0x50a0
+	ld	a, #0x80
+	ld	(x), a
+;	beep.c: 420: EXTI_CR1 &= ~(1<<6); //Port D external sensitivity bits7:6 10: Falling edge only
+	ldw	x, #0x50a0
+	ld	a, (x)
+	and	a, #0xbf
+	ld	(x), a
+;	beep.c: 423: tijd = &real_time;
+	ldw	x, #_real_time+0
+	ldw	(0x1a, sp), x
+	ld	a, (0x1a, sp)
+	push	a
+	ld	a, (0x1c, sp)
+	ld	(0x0c, sp), a
+	pop	a
+	ld	(0x0a, sp), a
+;	beep.c: 428: tm1637Init();
+	call	_tm1637Init
+;	beep.c: 430: InitializeUART();
+	call	_InitializeUART
+;	beep.c: 434: __asm__("rim");
 	rim
-;	beep.c: 443: while (1) {
+;	beep.c: 438: while (1) {
 00114$:
-;	beep.c: 444: ADC_CR1 |= ADC_ADON; // ADC ON
+;	beep.c: 439: ADC_CR1 |= ADC_ADON; // ADC ON
 	bset	0x5401, #0
-;	beep.c: 445: ADC_CSR |= ((0x0F)&2); // select channel = 2 = PC4
+;	beep.c: 440: ADC_CSR |= ((0x0F)&2); // select channel = 2 = PC4
 	ldw	x, #0x5400
 	ld	a, (x)
 	or	a, #0x02
 	ld	(x), a
-;	beep.c: 446: ADC_CR2 |= ADC_ALIGN; // Right Aligned Data
+;	beep.c: 441: ADC_CR2 |= ADC_ALIGN; // Right Aligned Data
 	ldw	x, #0x5402
 	ld	a, (x)
 	or	a, #0x08
 	ld	(x), a
-;	beep.c: 447: ADC_CR1 |= ADC_ADON; // start conversion
+;	beep.c: 442: ADC_CR1 |= ADC_ADON; // start conversion
 	bset	0x5401, #0
-;	beep.c: 448: while(((ADC_CSR)&(1<<7))== 0); // Wait till EOC
+;	beep.c: 443: while(((ADC_CSR)&(1<<7))== 0); // Wait till EOC
 00105$:
 	ldw	x, #0x5400
 	ld	a, (x)
 	sll	a
 	jrnc	00105$
-;	beep.c: 450: val |= (unsigned int)ADC_DRL;
+;	beep.c: 445: val |= (unsigned int)ADC_DRL;
 	ldw	x, #0x5405
 	ld	a, (x)
 	clrw	x
@@ -1061,10 +1031,10 @@ _main:
 	ld	(0x19, sp), a
 	ld	a, xh
 	or	a, (0x1c, sp)
-	ld	(0x01, sp), a
+	ld	(0x0e, sp), a
 	ld	a, (0x19, sp)
-	ld	(0x02, sp), a
-;	beep.c: 452: val |= (unsigned int)ADC_DRH<<8;
+	ld	(0x0f, sp), a
+;	beep.c: 447: val |= (unsigned int)ADC_DRH<<8;
 	ldw	x, #0x5404
 	ld	a, (x)
 	clrw	x
@@ -1078,51 +1048,53 @@ _main:
 	sllw	x
 	sllw	x
 	ld	a, xl
-	or	a, (0x02, sp)
+	or	a, (0x0f, sp)
 	ld	(0x17, sp), a
 	ld	a, xh
-	or	a, (0x01, sp)
+	or	a, (0x0e, sp)
 	ld	(0x1c, sp), a
 	ld	a, (0x17, sp)
 	ld	(0x1d, sp), a
-;	beep.c: 453: ADC_CR1 &= ~(1<<0); // ADC Stop Conversion
+;	beep.c: 448: ADC_CR1 &= ~(1<<0); // ADC Stop Conversion
 	ldw	x, #0x5401
 	ld	a, (x)
 	and	a, #0xfe
 	ld	(x), a
-;	beep.c: 454: current = val & 0x03ff;
+;	beep.c: 449: current = val & 0x03ff;
 	ld	a, (0x1d, sp)
-	ld	(0x04, sp), a
+	ld	(0x0d, sp), a
 	ld	a, (0x1c, sp)
 	and	a, #0x03
-	ld	(0x03, sp), a
-;	beep.c: 456: if (current > MIN_CURRENT){ //start timing current consumption
-	ldw	x, (0x03, sp)
+	ld	(0x0c, sp), a
+;	beep.c: 451: if (current > MIN_CURRENT){ //start timing current consumption
+	ldw	x, (0x0c, sp)
 	cpw	x, #0x000a
 	jrule	00109$
-;	beep.c: 458: starttijd.second = real_time.second;
+;	beep.c: 453: starttijd.second = real_time.second;
 	ldw	x, sp
-	addw	x, #6
+	incw	x
+	incw	x
 	ldw	y, (0x1a, sp)
 	ld	a, (y)
 	ld	(x), a
-;	beep.c: 459: starttijd.minute = real_time.minute;
+;	beep.c: 454: starttijd.minute = real_time.minute;
 	ldw	x, sp
-	addw	x, #6
+	incw	x
+	incw	x
 	ldw	(0x14, sp), x
 	ldw	x, (0x14, sp)
 	incw	x
 	ldw	y, (0x1a, sp)
 	ld	a, (0x1, y)
 	ld	(x), a
-;	beep.c: 460: starttijd.hour = real_time.hour;
+;	beep.c: 455: starttijd.hour = real_time.hour;
 	ldw	x, (0x14, sp)
 	incw	x
 	incw	x
 	ldw	y, (0x1a, sp)
 	ld	a, (0x2, y)
 	ld	(x), a
-;	beep.c: 461: starttijd.ticker = real_time.ticker;
+;	beep.c: 456: starttijd.ticker = real_time.ticker;
 	ldw	x, (0x14, sp)
 	addw	x, #0x0004
 	ldw	y, (0x1a, sp)
@@ -1136,21 +1108,21 @@ _main:
 	ld	a, (0x12, sp)
 	ld	(0x2, x), a
 	ldw	(x), y
-;	beep.c: 462: startmeting = 1;
+;	beep.c: 457: startmeting = 1;
 	ld	a, #0x01
-	ld	(0x05, sp), a
+	ld	(0x01, sp), a
 00109$:
-;	beep.c: 464: if ((current < MIN_CURRENT) && (startmeting))
-	ldw	x, (0x03, sp)
+;	beep.c: 459: if ((current < MIN_CURRENT) && (startmeting)) //stop timing current consumption
+	ldw	x, (0x0c, sp)
 	cpw	x, #0x000a
 	jrnc	00111$
-	tnz	(0x05, sp)
+	tnz	(0x01, sp)
 	jreq	00111$
-;	beep.c: 467: startmeting = 0;
-	clr	(0x05, sp)
+;	beep.c: 462: startmeting = 0;
+	clr	(0x01, sp)
 00111$:
-;	beep.c: 472: tm1637DisplayDecimal(tijd->minute, 0); // display minutes 
-	ldw	x, (0x0e, sp)
+;	beep.c: 467: tm1637DisplayDecimal(tijd->minute, 0); // display minutes 
+	ldw	x, (0x0a, sp)
 	ld	a, (0x1, x)
 	clrw	x
 	pushw	x

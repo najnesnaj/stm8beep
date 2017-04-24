@@ -1,10 +1,10 @@
 BEEP timing -- RTC -- bare metal -- stm8
 
 
-I wanted a real time clock
-I read the application note from STM : AN2780
+I wanted a real time clock without any extra hardware.
 
-They use the beep funktion, which generates a 500 hz wave.
+In the application note from STM : AN2780,
+they use the beep funktion, which generates a 500 hz wave. (this works also in low power mode)
 
 This wave is on port D4, which is defined as an input port that triggers an interrupt 
 

@@ -44,12 +44,12 @@ CABS                                00000000    00000000 =           0. bytes (A
      00000083  l_HOME                          
      00000100  l_IRAM                          
      00000100  l_SSEG                          
-     00000592  l_CODE                          
+     00000575  l_CODE                          
      00008000  s_HOME                          
      00008083  s_GSINIT                        
      0000809D  s_GSFINAL                       
      000080A0  s_CODE                          
-     00008632  s_INITIALIZER                   
+     00008615  s_INITIALIZER                   
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 2.
 Hexadecimal  [32-Bits]
@@ -124,7 +124,7 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-CODE                                000080A0    00000592 =        1426. bytes (REL,CON)
+CODE                                000080A0    00000575 =        1397. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
@@ -133,27 +133,25 @@ CODE                                000080A0    00000592 =        1426. bytes (R
      000080F2  _delay                             beep
      0000813D  _UARTPrintF                        beep
      00008154  _print_UCHAR_hex                   beep
-     000081A2  _i2c_send_address                  beep
-     000081E4  _i2c_set_start_ack                 beep
-     000081F2  _print_byte_hex                    beep
-     00008240  _InitializeUART                    beep
-     000082B9  _tm1637Init                        beep
-     000082C0  _tm1637DisplayDecimal              beep
-     00008359  _tm1637SetBrightness               beep
-     0000836B  __tm1637Start                      beep
-     0000837D  __tm1637Stop                       beep
-     000083A4  __tm1637ReadResult                 beep
-     000083BF  __tm1637WriteByte                  beep
-     000083FD  __tm1637ClkHigh                    beep
-     00008405  __tm1637ClkLow                     beep
-     0000840D  __tm1637DioHigh                    beep
-     00008415  __tm1637DioLow                     beep
-     0000841D  _rt_one_second_increment           beep
-     00008470  _timer_isr                         beep
-     0000848E  _main                              beep
-     000085CB  _segmentMap                        beep
-     000085DC  __mulint                           _mulint
-
+     000081A2  _print_byte_hex                    beep
+     000081EE  _InitializeUART                    beep
+     00008267  _tm1637Init                        beep
+     0000826E  _tm1637DisplayDecimal              beep
+     00008307  _tm1637SetBrightness               beep
+     00008319  __tm1637Start                      beep
+     0000832B  __tm1637Stop                       beep
+     00008352  __tm1637ReadResult                 beep
+     0000836D  __tm1637WriteByte                  beep
+     000083AB  __tm1637ClkHigh                    beep
+     000083B3  __tm1637ClkLow                     beep
+     000083BB  __tm1637DioHigh                    beep
+     000083C3  __tm1637DioLow                     beep
+     000083CB  _rt_one_second_increment           beep
+     0000841E  _timer_isr                         beep
+     0000843C  _option_bytes_unlock               beep
+     00008445  _main                              beep
+     000085AE  _segmentMap                        beep
+     000085BF  __mulint                           _mulint
 ASxxxx Linker V03.00 + NoICE + sdld,  page 10.
 
 Files Linked                              [ module(s) ]
