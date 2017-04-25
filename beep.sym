@@ -9,9 +9,12 @@ Symbol Table
     .__.H$L.                                                    =  000001 L
   8 _InitializeSystemClock                                         000008 GR
   8 _InitializeUART                                                00014E GR
+  8 _SetDefaultValues                                              00039C GR
   8 _UARTPrintF                                                    00009D GR
   5 __interrupt_vect                                               000000 R
     __mulint                                                       ****** GX
+  2 __onOrOff                                                      00000E GR
+  2 __pulseLength                                                  000000 GR
   6 __sdcc_gs_init_startup                                         000000 R
   6 __sdcc_init_data                                               000000 R
   5 __sdcc_program_startup                                         000080 R
@@ -24,16 +27,19 @@ Symbol Table
   8 __tm1637Start                                                  000279 GR
   8 __tm1637Stop                                                   00028B GR
   8 __tm1637WriteByte                                              0002CD GR
+  9 __xinit___onOrOff                                              00000E R
+  9 __xinit___pulseLength                                          000000 R
+  9 __xinit__numberOfValues                                        000015 R
   8 _delay                                                         000052 GR
   8 _delayTenMicro                                                 000000 GR
   1 _internteller                                                  000008 GR
-  8 _main                                                          0003A5 GR
-  8 _option_bytes_unlock                                           00039C GR
+  8 _main                                                          000409 GR
+  2 _numberOfValues                                                000015 GR
   8 _print_UCHAR_hex                                               0000B4 GR
   8 _print_byte_hex                                                000102 GR
   1 _real_time                                                     000000 GR
   8 _rt_one_second_increment                                       00032B GR
-  8 _segmentMap                                                    00050E GR
+  8 _segmentMap                                                    000587 GR
   8 _timer_isr                                                     00037E GR
   8 _tm1637DisplayDecimal                                          0001CE GR
   8 _tm1637Init                                                    0001C7 GR
@@ -53,13 +59,13 @@ Area Table
 
    0 _CODE                                      size      0   flags    0
    1 DATA                                       size      A   flags    0
-   2 INITIALIZED                                size      0   flags    0
+   2 INITIALIZED                                size     16   flags    0
    3 SSEG                                       size      1   flags    0
    4 DABS                                       size      0   flags    8
    5 HOME                                       size     83   flags    0
    6 GSINIT                                     size     1A   flags    0
    7 GSFINAL                                    size      3   flags    0
-   8 CODE                                       size    51F   flags    0
-   9 INITIALIZER                                size      0   flags    0
+   8 CODE                                       size    598   flags    0
+   9 INITIALIZER                                size     16   flags    0
    A CABS                                       size      0   flags    8
 

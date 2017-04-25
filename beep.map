@@ -12,8 +12,6 @@ CABS                                00000000    00000000 =           0. bytes (A
      00000000  l_BSEG_BYTES                    
      00000000  l_CABS                          
      00000000  l_DABS                          
-     00000000  l_INITIALIZED                   
-     00000000  l_INITIALIZER                   
      00000000  l_ISEG                          
      00000000  l_OSEG                          
      00000000  l_REG_BANK_0                    
@@ -33,6 +31,8 @@ CABS                                00000000    00000000 =           0. bytes (A
      0000000A  l_DATA                          
      0000000B  s_INITIALIZED                   
      00000010  s_REG_BANK_2                    
+     00000016  l_INITIALIZED                   
+     00000016  l_INITIALIZER                   
      00000018  s_BIT_BANK                      
      00000018  s_ISEG                          
      00000018  s_OSEG                          
@@ -44,12 +44,12 @@ CABS                                00000000    00000000 =           0. bytes (A
      00000083  l_HOME                          
      00000100  l_IRAM                          
      00000100  l_SSEG                          
-     00000575  l_CODE                          
+     000005EE  l_CODE                          
      00008000  s_HOME                          
      00008083  s_GSINIT                        
      0000809D  s_GSFINAL                       
      000080A0  s_CODE                          
-     00008615  s_INITIALIZER                   
+     0000868E  s_INITIALIZER                   
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 2.
 Hexadecimal  [32-Bits]
@@ -97,16 +97,19 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-HOME                                00008000    00000083 =         131. bytes (REL,CON)
+INITIALIZED                         0000000B    00000016 =          22. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
+     0000000B  __pulseLength                      beep
+     00000019  __onOrOff                          beep
+     00000020  _numberOfValues                    beep
 ASxxxx Linker V03.00 + NoICE + sdld,  page 7.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-GSINIT                              00008083    0000001A =          26. bytes (REL,CON)
+HOME                                00008000    00000083 =         131. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
@@ -115,7 +118,7 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-GSFINAL                             0000809D    00000003 =           3. bytes (REL,CON)
+GSINIT                              00008083    0000001A =          26. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
@@ -124,7 +127,16 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-CODE                                000080A0    00000575 =        1397. bytes (REL,CON)
+GSFINAL                             0000809D    00000003 =           3. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+ASxxxx Linker V03.00 + NoICE + sdld,  page 10.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+CODE                                000080A0    000005EE =        1518. bytes (REL,CON)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
@@ -148,11 +160,20 @@ CODE                                000080A0    00000575 =        1397. bytes (R
      000083C3  __tm1637DioLow                     beep
      000083CB  _rt_one_second_increment           beep
      0000841E  _timer_isr                         beep
-     0000843C  _option_bytes_unlock               beep
-     00008445  _main                              beep
-     000085AE  _segmentMap                        beep
-     000085BF  __mulint                           _mulint
-ASxxxx Linker V03.00 + NoICE + sdld,  page 10.
+     0000843C  _SetDefaultValues                  beep
+     000084A9  _main                              beep
+     00008627  _segmentMap                        beep
+     00008638  __mulint                           _mulint
+ASxxxx Linker V03.00 + NoICE + sdld,  page 11.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+INITIALIZER                         0000868E    00000016 =          22. bytes (REL,CON)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+ASxxxx Linker V03.00 + NoICE + sdld,  page 12.
 
 Files Linked                              [ module(s) ]
 
@@ -163,7 +184,7 @@ Libraries Linked                          [ object file ]
 
 /usr/bin/../share/sdcc/lib/stm8/stm8.lib  [ _mulint.rel ]
 
-ASxxxx Linker V03.00 + NoICE + sdld,  page 11.
+ASxxxx Linker V03.00 + NoICE + sdld,  page 13.
 
 User Base Address Definitions
 

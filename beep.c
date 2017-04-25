@@ -348,13 +348,14 @@ void timer_isr(void) __interrupt(BEEP_ISR) {
 	}
 
 }
-
+/*
 #define _MEM_(mem_addr)         (*(volatile unsigned short *)(mem_addr))
 #define EEPROM_START_ADDR       0x4000
 #define EEPROM_END_ADDR         0x4280 
 //640 bytes of eeprom
 #define FLASH_CR2_OPT 7
 #define FLASH_NCR2_NOPT 7
+*/
 /*
    void eeprom_write(unsigned int addr, unsigned short *buf, unsigned int len) {
 //    unlock EEPROM 
@@ -371,22 +372,103 @@ FLASH_IAPSR &= ~(1 << FLASH_IAPSR_DUL);
 }
  */
 //reading eeprom stm8flash -c stlinkv2 -p stm8s103f3 -s eeprom -r dump.bin
+/* 
 void option_bytes_unlock() {
 	FLASH_CR2 |= (1 << FLASH_CR2_OPT);
 	FLASH_NCR2 &= ~(1 << FLASH_NCR2_NOPT);
 }
+*/
+
+
+
+
+//
+//  Data to write into the EEPROM.
+//
+unsigned int _pulseLength[] = { 2000U, 27830U, 400U, 1580U, 400U, 3580U, 400U };
+unsigned char _onOrOff[] =    {   1,      0,     1,     0,    1,     0,    1 };
+char numberOfValues = 7;
+
+//--------------------------------------------------------------------------------
+//
+//  Write the default values into EEPROM.
+//
+void SetDefaultValues()
+{
+    char *addrss = (char *) 0x4000;        //  EEPROM base address.
+    int index;
+    //
+    //  Check if the EEPROM is write-protected.  If it is then unlock the EEPROM.
+    //
+FLASH_DUKR = FLASH_DUKR_KEY1;
+FLASH_DUKR = FLASH_DUKR_KEY2;
+/*    if (FLASH_IAPSR_DUL == 0)
+    {
+        FLASH_DUKR = 0xae;
+        FLASH_DUKR = 0x56;
+    }*/
+    //
+    //  Write the data to the EEPROM.
+    //
+    *addrss++ = (char) numberOfValues;
+    for (index = 0; index < numberOfValues; index++)
+    {
+        *addrss++ = (char) (_pulseLength[index] & 0xff);
+        *addrss++ = (char) ((_pulseLength[index] >> 8) & 0xff);
+        *addrss++ = _onOrOff[index];
+    }
+    //
+    //  Now write protect the EEPROM.
+    //
+  //  FLASH_IAPSR_DUL = 0;
+} 
+
+/*
+
+void VerifyEEPROMData()
+{
+    char *address = (char *) 0x4000;        //  EEPROM base address.
+    int index;
+unsigned int value;
+    //PD_ODR_ODR2 = 1;            //  Checking the data
+   // PD_ODR_ODR3 = 0;            //  No errors.
+    //
+    if (*address++ != numberOfValues)
+    {
+    //    PD_ODR_ODR3 = 1;
+    }
+    else
+    {
+        for (index = 0; index < numberOfValues; index++)
+        {
+            value = *address++;
+            value += (*address++ << 8);
+            if (value != _pulseLength[index])
+            {
+             //   PD_ODR_ODR3 = 1;
+            }
+            if (*address++ != _onOrOff[index])
+            {
+              //  PD_ODR_ODR3 = 1;
+            }
+        }
+    }
+    //PD_ODR_ODR2 = 0;        // Finished processing.
+}
+*/
+
 
 
 int main () {
-	unsigned int addr;
 	st_time *tijd;
 	st_time starttijd;
+unsigned int urenteller=1;
 	u8 startmeting=0;	
 	unsigned int val=0, current,periode;
 	unsigned int displaymode=1;
 	InitializeSystemClock();
 
-
+/*
 	option_bytes_unlock();
 	//EEPROM unlock
 	FLASH_DUKR = FLASH_DUKR_KEY1;
@@ -399,15 +481,15 @@ int main () {
 	FLASH_IAPSR &= ~(1 << FLASH_IAPSR_DUL);
 
 
+*/
 
+SetDefaultValues();
 
-
-
-	//display on PD2 PD3
 	BEEP_CSR = (0<<7) | (0<<6) | (1<<5) | 0x1E;
 	PD_DDR = (1 << 3) | (1 << 2); // output mode
 
 	PD_DDR &=  ~(1 << 4); //PD4 input
+	//display on PD2 PD3
 	PD_CR1 = (1 << 3) | (1 << 2); // push-pull
 	PD_CR1 &= ~(1 << 4); // input with float
 	PD_CR2 = (1 << 3) | (1 << 2) | (1<< 4); // up to 10MHz speed + interrupt enabled 
@@ -457,9 +539,10 @@ int main () {
 			periode += real_time.ticker - starttijd.ticker; //periode in seconds that application draws current
 			startmeting = 0;
 		}
-                if (real_time.hour == 1)
-                {
+                if (real_time.hour == urenteller)
+                {       ++urenteller;
                         periode = 0;
+                        // store hour and period of activity
                         // volt * ampere * (periode / 3600)   
                 }
 
