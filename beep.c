@@ -348,36 +348,16 @@ void timer_isr(void) __interrupt(BEEP_ISR) {
 	}
 
 }
+
+
+
 /*
-#define _MEM_(mem_addr)         (*(volatile unsigned short *)(mem_addr))
 #define EEPROM_START_ADDR       0x4000
 #define EEPROM_END_ADDR         0x4280 
 //640 bytes of eeprom
 #define FLASH_CR2_OPT 7
 #define FLASH_NCR2_NOPT 7
-*/
-/*
-   void eeprom_write(unsigned int addr, unsigned short *buf, unsigned int len) {
-//    unlock EEPROM 
-FLASH_DUKR = FLASH_DUKR_KEY1;
-FLASH_DUKR = FLASH_DUKR_KEY2;
-while (!(FLASH_IAPSR & (1 << FLASH_IAPSR_DUL)));
-// write data from buffer 
-for (uint16_t i = 0; i < len; i++, addr++) {
-_MEM_(addr) = buf[i];
-while (!(FLASH_IAPSR & (1 << FLASH_IAPSR_EOP)));
-}
-//lock EEPROM 
-FLASH_IAPSR &= ~(1 << FLASH_IAPSR_DUL);
-}
  */
-//reading eeprom stm8flash -c stlinkv2 -p stm8s103f3 -s eeprom -r dump.bin
-/* 
-void option_bytes_unlock() {
-	FLASH_CR2 |= (1 << FLASH_CR2_OPT);
-	FLASH_NCR2 &= ~(1 << FLASH_NCR2_NOPT);
-}
-*/
 
 
 
@@ -395,95 +375,43 @@ char numberOfValues = 7;
 //
 void SetDefaultValues()
 {
-    char *addrss = (char *) 0x4000;        //  EEPROM base address.
-    int index;
-    //
-    //  Check if the EEPROM is write-protected.  If it is then unlock the EEPROM.
-    //
-FLASH_DUKR = FLASH_DUKR_KEY1;
-FLASH_DUKR = FLASH_DUKR_KEY2;
-/*    if (FLASH_IAPSR_DUL == 0)
-    {
-        FLASH_DUKR = 0xae;
-        FLASH_DUKR = 0x56;
-    }*/
-    //
-    //  Write the data to the EEPROM.
-    //
-    *addrss++ = (char) numberOfValues;
-    for (index = 0; index < numberOfValues; index++)
-    {
-        *addrss++ = (char) (_pulseLength[index] & 0xff);
-        *addrss++ = (char) ((_pulseLength[index] >> 8) & 0xff);
-        *addrss++ = _onOrOff[index];
-    }
-    //
-    //  Now write protect the EEPROM.
-    //
-  //  FLASH_IAPSR_DUL = 0;
+	char *addrss = (char *) 0x4000;        //  EEPROM base address.
+	int index;
+	//
+	//  Check if the EEPROM is write-protected.  If it is then unlock the EEPROM.
+	//
+	FLASH_DUKR = FLASH_DUKR_KEY1;
+	FLASH_DUKR = FLASH_DUKR_KEY2;
+	//
+	//  Write the data to the EEPROM.
+	//
+	*addrss++ = (char) numberOfValues;
+	for (index = 0; index < numberOfValues; index++)
+	{
+		*addrss++ = (char) (_pulseLength[index] & 0xff);
+		*addrss++ = (char) ((_pulseLength[index] >> 8) & 0xff);
+		*addrss++ = _onOrOff[index];
+	}
+	//
+	//  Now write protect the EEPROM.
+	//
+	//  FLASH_IAPSR_DUL = 0;
 } 
 
-/*
-
-void VerifyEEPROMData()
-{
-    char *address = (char *) 0x4000;        //  EEPROM base address.
-    int index;
-unsigned int value;
-    //PD_ODR_ODR2 = 1;            //  Checking the data
-   // PD_ODR_ODR3 = 0;            //  No errors.
-    //
-    if (*address++ != numberOfValues)
-    {
-    //    PD_ODR_ODR3 = 1;
-    }
-    else
-    {
-        for (index = 0; index < numberOfValues; index++)
-        {
-            value = *address++;
-            value += (*address++ << 8);
-            if (value != _pulseLength[index])
-            {
-             //   PD_ODR_ODR3 = 1;
-            }
-            if (*address++ != _onOrOff[index])
-            {
-              //  PD_ODR_ODR3 = 1;
-            }
-        }
-    }
-    //PD_ODR_ODR2 = 0;        // Finished processing.
-}
-*/
 
 
 
 int main () {
 	st_time *tijd;
 	st_time starttijd;
-unsigned int urenteller=1;
+	unsigned int urenteller=1;
 	u8 startmeting=0;	
 	unsigned int val=0, current,periode;
 	unsigned int displaymode=1;
 	InitializeSystemClock();
 
-/*
-	option_bytes_unlock();
-	//EEPROM unlock
-	FLASH_DUKR = FLASH_DUKR_KEY1;
-	FLASH_DUKR = FLASH_DUKR_KEY2;
-	while (!(FLASH_IAPSR & (1 << FLASH_IAPSR_DUL)));
-	for (addr = EEPROM_START_ADDR; addr < EEPROM_END_ADDR; addr++)
-		_MEM_(addr) = 0x11;
 
-	//lock EEPROM
-	FLASH_IAPSR &= ~(1 << FLASH_IAPSR_DUL);
-
-
-*/
-
-SetDefaultValues();
+	SetDefaultValues();
 
 	BEEP_CSR = (0<<7) | (0<<6) | (1<<5) | 0x1E;
 	PD_DDR = (1 << 3) | (1 << 2); // output mode
@@ -539,12 +467,12 @@ SetDefaultValues();
 			periode += real_time.ticker - starttijd.ticker; //periode in seconds that application draws current
 			startmeting = 0;
 		}
-                if (real_time.hour == urenteller)
-                {       ++urenteller;
-                        periode = 0;
-                        // store hour and period of activity
-                        // volt * ampere * (periode / 3600)   
-                }
+		if (real_time.hour == urenteller)
+		{       ++urenteller;
+			periode = 0;
+			// store hour and period of activity
+			// volt * ampere * (periode / 3600)   
+		}
 
 
 		tm1637DisplayDecimal(tijd->minute, 0); // display minutes 
