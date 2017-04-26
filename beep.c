@@ -365,8 +365,8 @@ void timer_isr(void) __interrupt(BEEP_ISR) {
 //
 //  Data to write into the EEPROM.
 //
-unsigned int _pulseLength[] = { 2000U, 27830U, 400U, 1580U, 400U, 3580U, 400U };
-unsigned char _onOrOff[] =    {   1,      0,     1,     0,    1,     0,    1 };
+unsigned int _pulseLength[] = { 0, 0, 0, 0, 0, 0, 0 };
+unsigned char _onOrOff[] =    {   0,      0,     0,     0,    0,     0,    0 };
 char numberOfValues = 7;
 
 //--------------------------------------------------------------------------------
@@ -396,6 +396,7 @@ void SetDefaultValues()
 	//  Now write protect the EEPROM.
 	//
 	//  FLASH_IAPSR_DUL = 0;
+ FLASH_IAPSR &= ~(1 << FLASH_IAPSR_DUL);
 } 
 
 
@@ -408,9 +409,10 @@ int main () {
 	u8 startmeting=0;	
 	unsigned int val=0, current,periode;
 	unsigned int displaymode=1;
+unsigned int dexter;
+unsigned int *periodwaarde = _pulseLength;
+//write 0 values to eeprom
 	InitializeSystemClock();
-
-
 	SetDefaultValues();
 
 	BEEP_CSR = (0<<7) | (0<<6) | (1<<5) | 0x1E;
@@ -471,7 +473,14 @@ int main () {
 		{       ++urenteller;
 			periode = 0;
 			// store hour and period of activity
-			// volt * ampere * (periode / 3600)   
+			// volt * ampere * (periode / 3611)   
+
+//test after 1 hour write some values to eeprom
+for (dexter = 0; dexter < numberOfValues; dexter++)
+  *periodwaarde++ = 1;
+//  _pulseLength = { 1, 1, 1, 1, 1, 1, 1 };
+// _onOrOff =    {   1,      1,     1,     1,    1,     1,    1 };
+	SetDefaultValues();
 		}
 
 

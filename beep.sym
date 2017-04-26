@@ -33,13 +33,13 @@ Symbol Table
   8 _delay                                                         000052 GR
   8 _delayTenMicro                                                 000000 GR
   1 _internteller                                                  000008 GR
-  8 _main                                                          000409 GR
+  8 _main                                                          000410 GR
   2 _numberOfValues                                                000015 GR
   8 _print_UCHAR_hex                                               0000B4 GR
   8 _print_byte_hex                                                000102 GR
   1 _real_time                                                     000000 GR
   8 _rt_one_second_increment                                       00032B GR
-  8 _segmentMap                                                    000587 GR
+  8 _segmentMap                                                    0005C8 GR
   8 _timer_isr                                                     00037E GR
   8 _tm1637DisplayDecimal                                          0001CE GR
   8 _tm1637Init                                                    0001C7 GR
@@ -65,7 +65,7 @@ Area Table
    5 HOME                                       size     83   flags    0
    6 GSINIT                                     size     1A   flags    0
    7 GSFINAL                                    size      3   flags    0
-   8 CODE                                       size    598   flags    0
+   8 CODE                                       size    5D9   flags    0
    9 INITIALIZER                                size     16   flags    0
    A CABS                                       size      0   flags    8
 
